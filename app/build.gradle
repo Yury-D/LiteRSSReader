@@ -22,5 +22,11 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     //compile 'com.android.support:appcompat-v7:19.+'
-    compile project(":submodules:actionbarsherlock")
+    compile project(':submodules:actionbarsherlock')
+    compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-android-4.48.jar')
+    compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-android-4.48-javadoc.jar')
+    compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-android-4.48-sources.jar')
+    compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-core-4.48.jar')
+    compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-core-4.48-javadoc.jar')
+    compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-core-4.48-sources.jar')
 }

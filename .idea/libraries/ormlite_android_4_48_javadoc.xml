@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="ormlite-android-4.48-javadoc">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/submodules/ormlite-android-4.48-javadoc.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
