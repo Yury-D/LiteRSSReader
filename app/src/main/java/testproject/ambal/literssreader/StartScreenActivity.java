@@ -5,6 +5,12 @@ import android.view.Menu;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.j256.ormlite.dao.Dao;
+
+import java.sql.SQLException;
+
+import testproject.ambal.literssreader.ORM.HelperFactory;
+import testproject.ambal.literssreader.ORM.entities.Item;
 
 
 public class StartScreenActivity extends SherlockActivity {
@@ -15,6 +21,14 @@ public class StartScreenActivity extends SherlockActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
+
+        HelperFactory.setHelper(getApplicationContext());
+        try {
+            Dao<Item, Integer> myDao = HelperFactory.getHelper().getItemDao();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
 
