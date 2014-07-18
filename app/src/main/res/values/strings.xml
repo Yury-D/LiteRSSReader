@@ -7,5 +7,6 @@
     <string name="fetch">Fetch</string>
     <string name="tut.by">tut.by</string>
     <string name="onliner.by">onliner.by</string>
+    <string name="download_error_message">download error</string>
 
 </resources>

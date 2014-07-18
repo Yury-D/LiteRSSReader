@@ -17,6 +17,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+
+    packagingOptions {
+        exclude 'com/j256/ormlite/android/LICENSE.txt'
+        exclude 'com/j256/ormlite/android/README.txt'
+        exclude 'com/j256/ormlite/core/README.txt'
+        exclude 'com/j256/ormlite/core/LICENSE.txt'
+
+
+    }
 }
 
 dependencies {
@@ -24,9 +34,9 @@ dependencies {
     //compile 'com.android.support:appcompat-v7:19.+'
     compile project(':submodules:actionbarsherlock')
     compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-android-4.48.jar')
-    compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-android-4.48-javadoc.jar')
+    //compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-android-4.48-javadoc.jar')
     compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-android-4.48-sources.jar')
     compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-core-4.48.jar')
-    compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-core-4.48-javadoc.jar')
+    //compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-core-4.48-javadoc.jar')
     compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-core-4.48-sources.jar')
 }

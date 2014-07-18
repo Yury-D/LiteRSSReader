@@ -2,14 +2,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".StartScreenActivity" >
-    <item android:id="@+id/action_settings"
+    <item
+        android:id="@+id/menuItem_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
         android:showAsAction="ifRoom"
         android:icon="@drawable/abs__list_selector_holo_light"
       />
     <item
-        android:id="@+id/menu_load"
+        android:id="@+id/menuItem_load"
         android:title="@string/fetch"
         android:orderInCategory="200"
         android:showAsAction="always"
