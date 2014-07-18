@@ -1,11 +1,5 @@
 package testproject.ambal.literssreader.service;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.Toast;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -18,36 +12,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import testproject.ambal.literssreader.R;
-
 /**
  * Created by Ambal on 18.07.14.
  */
+public class Downloader {
+    private String targetUrl;
 
-public class Downloader extends AsyncTask<String, String, String> {
-    private Context mContext;
-    private ProgressDialog dialog;
-
-    //данный конструктор нужен чтобы передать контекст в AsyncTask
-    public Downloader(Context context) {
-        mContext = context;
-        dialog = new ProgressDialog(mContext);
+    public Downloader(String url) {
+        targetUrl = url;
     }
 
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        this.dialog.setMessage("Please Wait...");
-        this.dialog.setIndeterminate(true);
-        this.dialog.setCancelable(false);
-        this.dialog.show();
-    }
-
-    @Override
-    protected String doInBackground(String... params) {
+    String download() {
         StringBuilder stringBuilder = new StringBuilder();
         HttpClient httpClient = new DefaultHttpClient();
-        HttpGet httpGet = new HttpGet(params[0]);
+        HttpGet httpGet = new HttpGet(targetUrl);
         InputStream inputStream = null;
         try {
             HttpResponse response = httpClient.execute(httpGet);
@@ -62,7 +40,7 @@ public class Downloader extends AsyncTask<String, String, String> {
                 }
                 return stringBuilder.toString();
             } else {
-                return mContext.getString(R.string.download_error_message);
+                return null;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -78,28 +56,5 @@ public class Downloader extends AsyncTask<String, String, String> {
         return null;
     }
 
-        /*@Override
-        protected void onProgressUpdate(String... result) {
-            super.onPostExecute(result[0]);
-            if (result[0] == null) {
-                Toast.makeText(MainActivity.this, "Error loading...", Toast.LENGTH_LONG).show();
-            }
-        }*/
 
-    @Override
-    protected void onPostExecute(String result) {
-        super.onPostExecute(result);
-        Toast.makeText(mContext, result, Toast.LENGTH_LONG).show();
-       /* menuItem.collapseActionView();
-        menuItem.setActionView(null);*/
-        if (this.dialog.isShowing()) {
-            this.dialog.dismiss();
-
-        }
-
-
-    }
 }
-
-
-

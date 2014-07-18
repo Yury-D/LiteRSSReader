@@ -13,13 +13,13 @@ import java.sql.SQLException;
 
 import testproject.ambal.literssreader.ORM.HelperFactory;
 import testproject.ambal.literssreader.ORM.entities.Item;
-import testproject.ambal.literssreader.service.Downloader;
+import testproject.ambal.literssreader.service.DataUpdater;
 
 
 public class StartScreenActivity extends SherlockActivity {
 
     private MenuItem menuItem;
-
+    private String result;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,8 +49,15 @@ public class StartScreenActivity extends SherlockActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.menuItem_load: {
-                Downloader mdownloader = new Downloader(this);
-                mdownloader.execute("http://www.news.tut.by/rss/auto/autobusiness.rss");
+                DataUpdater mDataUpdater = new DataUpdater(this);
+                mDataUpdater.execute("http://www.news.tut.by/rss/auto/autobusiness.rss");
+                /*try {
+                    result = mDataUpdater.get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }*/
                 break;
             }
             case R.id.menuItem_settings: {
