@@ -2,14 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.1.0"
-
+    buildToolsVersion '19.1.0'
     defaultConfig {
-        applicationId "testproject.ambal.literssreader"
+        applicationId 'testproject.ambal.literssreader'
         minSdkVersion 8
         targetSdkVersion 19
         versionCode 1
-        versionName "1.0"
+        versionName '1.0'
     }
     buildTypes {
         release {
@@ -17,8 +16,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
-
     packagingOptions {
         exclude 'com/j256/ormlite/android/LICENSE.txt'
         exclude 'com/j256/ormlite/android/README.txt'
@@ -26,6 +23,8 @@ android {
         exclude 'com/j256/ormlite/core/LICENSE.txt'
 
 
+    }
+    productFlavors {
     }
 }
 
@@ -39,4 +38,7 @@ dependencies {
     compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-core-4.48.jar')
     //compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-core-4.48-javadoc.jar')
     compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-core-4.48-sources.jar')
+    compile files('C:/JAVA_Project/Android/LiteRSSReader/submodules/ormlite-android-4.48.jar')
+    compile files('C:/JAVA_Project/Android/LiteRSSReader/submodules/ormlite-android-4.48-sources.jar')
+    compile files('C:/JAVA_Project/Android/LiteRSSReader/submodules/ormlite-core-4.48.jar')
 }

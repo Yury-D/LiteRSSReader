@@ -21,30 +21,27 @@ public class Item {
     @DatabaseField
     String author;
     @DatabaseField
-    String categoryDomain;
+    String category;
     @DatabaseField
     String enclosure;
     @DatabaseField
     String pubDate;
-    @DatabaseField
-    String imageLink;
     @DatabaseField(canBeNull = false, foreign = true)
     Channel channel;
 
-    Item() {
+    public Item() {
         // needed by ormlite
     }
 
-    public Item(int id, String title, String link, String description, String author, String categoryDomain, String enclosure, String pubDate, String imageLink, Channel channel) {
+    public Item(int id, String title, String link, String description, String author, String category, String enclosure, String pubDate, Channel channel) {
         this.id = id;
         this.title = title;
         this.link = link;
         this.description = description;
         this.author = author;
-        this.categoryDomain = categoryDomain;
+        this.category = category;
         this.enclosure = enclosure;
         this.pubDate = pubDate;
-        this.imageLink = imageLink;
         this.channel = channel;
     }
 
@@ -56,11 +53,82 @@ public class Item {
                 ", link='" + link + '\'' +
                 ", description='" + description + '\'' +
                 ", author='" + author + '\'' +
-                ", categoryDomain='" + categoryDomain + '\'' +
+                ", category='" + category + '\'' +
                 ", enclosure='" + enclosure + '\'' +
                 ", pubDate='" + pubDate + '\'' +
-                ", imageLink='" + imageLink + '\'' +
                 ", channel=" + channel +
                 '}';
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getEnclosure() {
+        return enclosure;
+    }
+
+    public void setEnclosure(String enclosure) {
+        this.enclosure = enclosure;
+    }
+
+    public String getPubDate() {
+        return pubDate;
+    }
+
+    public void setPubDate(String pubDate) {
+        this.pubDate = pubDate;
+    }
+
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public void setChannel(Channel channel) {
+        this.channel = channel;
     }
 }

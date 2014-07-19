@@ -3,6 +3,7 @@ package testproject.ambal.literssreader;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
@@ -24,6 +25,7 @@ public class StartScreenActivity extends SherlockActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
+        ListView view = (ListView) findViewById(R.id.listView);
         HelperFactory.setHelper(getApplicationContext());
         try {
             Dao<Item, Integer> myDao = HelperFactory.getHelper().getItemDao();
@@ -51,13 +53,6 @@ public class StartScreenActivity extends SherlockActivity {
             case R.id.menuItem_load: {
                 DataUpdater mDataUpdater = new DataUpdater(this);
                 mDataUpdater.execute("http://www.news.tut.by/rss/auto/autobusiness.rss");
-                /*try {
-                    result = mDataUpdater.get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }*/
                 break;
             }
             case R.id.menuItem_settings: {
