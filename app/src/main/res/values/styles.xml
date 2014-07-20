@@ -5,4 +5,40 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="btnStylemedium_wood" parent="@android:style/Widget.Button">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#ff000000</item>
+        <item name="android:shadowColor">#000000</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">0.6</item>
+        <item name="android:background">@drawable/custom_btn_medium_wood</item>
+        <!--<item name="android:padding">10dip</item>-->
+        <item name="android:layout_margin">0.1dp</item>
+    </style>
+    <style name="btnStylesorbus" parent="@android:style/Widget.Button">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#ff000000</item>
+        <item name="android:gravity">center</item>
+        <item name="android:shadowColor">#000000</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">0.6</item>
+        <item name="android:background">@drawable/custom_btn_sorbus</item>
+        <item name="android:layout_margin">0.1dp</item>
+    </style>
+    <style name="btnStylemedium_blue" parent="@android:style/Widget.Button">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#ffffffff</item>
+        <item name="android:shadowColor">#000000</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">0.6</item>
+        <item name="android:background">@drawable/custom_btn_blue</item>
+        <!--<item name="android:padding">10dip</item>-->
+        <item name="android:layout_margin">0.1dp</item>
+    </style>
 </resources>

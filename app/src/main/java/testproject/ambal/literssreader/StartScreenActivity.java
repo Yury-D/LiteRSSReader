@@ -1,36 +1,79 @@
 package testproject.ambal.literssreader;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
+import android.webkit.URLUtil;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
-//import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.j256.ormlite.dao.Dao;
 
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import testproject.ambal.literssreader.ORM.HelperFactory;
+import testproject.ambal.literssreader.ORM.entities.Channel;
 import testproject.ambal.literssreader.ORM.entities.Item;
 import testproject.ambal.literssreader.service.DataUpdater;
 
 
 public class StartScreenActivity extends SherlockActivity {
 
-    private MenuItem menuItem;
-    private String result;
+    private  EditText mText;
+    private Intent starterIntent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
-        ListView view = (ListView) findViewById(R.id.listView);
+
+        starterIntent = getIntent();
+
+        LinearLayout buttonlayout = (LinearLayout)findViewById(R.id.button_keeper);
+        mText = (EditText) findViewById(R.id.editText);
+
+        //читаем список имеющихся каналов
         HelperFactory.setHelper(getApplicationContext());
+        Dao<Channel, Integer> myChennelDao;
+        List<Channel> myChannels = Collections.EMPTY_LIST;
+
         try {
-            Dao<Item, Integer> myDao = HelperFactory.getHelper().getItemDao();
+            myChennelDao = HelperFactory.getHelper().getChannelDao();
+            myChannels = myChennelDao.queryForAll();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+        }
+        //создаем по кнопке на канал
+        for (Iterator<Channel> mIterator = myChannels.iterator(); mIterator.hasNext();){
+            final Channel channel = mIterator.next();
+            Button myButton = new Button(this);
+            myButton.setText(channel.getTitle());
+            myButton.setBackgroundResource(R.drawable.custom_btn_blue);
+
+            // создаем обработчик нажатия
+            View.OnClickListener onClickListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getApplicationContext(), DetailFeedActivity.class);
+                    //передаем id фида в intent
+                    intent.putExtra("ChannelId", channel.getId());
+                    startActivity(intent);
+                }
+            };
+
+            myButton.setOnClickListener(onClickListener);
+            buttonlayout.addView(myButton);
         }
 
     }
@@ -39,7 +82,8 @@ public class StartScreenActivity extends SherlockActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.start_screen_menu, menu);
+        MenuInflater inflater = getSupportMenuInflater();
+        inflater.inflate(R.menu.start_screen_menu, menu);
         //menuItem = menu.findItem(R.id.menuItem_load);
         return true;
     }
@@ -51,8 +95,11 @@ public class StartScreenActivity extends SherlockActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.menuItem_load: {
+                //item.setActionView(R.layout.progressbar);
                 DataUpdater mDataUpdater = new DataUpdater(this);
-                mDataUpdater.execute("http://www.news.tut.by/rss/auto/autobusiness.rss");
+                mDataUpdater.execute("http://news.tut.by/rss/auto/autobusiness.rss");
+                //item.collapseActionView();
+                //item.setActionView(null);
                 break;
             }
             case R.id.menuItem_settings: {
@@ -64,4 +111,16 @@ public class StartScreenActivity extends SherlockActivity {
         }
         return true;/*super.onOptionsItemSelected(item)*/
     }
+
+    //"add Feed" button listener
+    public void addFeed(View v) {
+        String newFeed = mText.getText().toString();
+        if (!URLUtil.isValidUrl(newFeed)){
+            Toast.makeText(this, "Incorrect input URL", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        DataUpdater mUpdater = new DataUpdater(this);
+        mUpdater.execute(newFeed);
+    }
+
 }

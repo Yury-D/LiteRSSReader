@@ -12,7 +12,7 @@ public class Item {
 
     @DatabaseField(generatedId = true)
     int id;
-    @DatabaseField(index = true)
+    @DatabaseField
     String title;
     @DatabaseField
     String link;
@@ -26,7 +26,7 @@ public class Item {
     String enclosure;
     @DatabaseField
     String pubDate;
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, foreignAutoCreate = true)
     Channel channel;
 
     public Item() {

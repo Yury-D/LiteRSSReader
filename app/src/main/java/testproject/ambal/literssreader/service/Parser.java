@@ -117,11 +117,10 @@ public class Parser {
                         if (insideItem) {
                             if (tagname.equalsIgnoreCase(TAG_ITEM)) {
                                 // add item object to list
+                                item.setChannel(channel);
                                 items.add(item);
                                 insideItem = false;
                             } else if (tagname.equalsIgnoreCase(TAG_TITLE)) {
-                                //Log.d(TAG, tagname.toString().concat(" -> ".concat(text)));
-                                //Log.d(TAG, channel.toString());
                                 item.setTitle(text);
                             } else if (tagname.equalsIgnoreCase(TAG_LINK)) {
                                 item.setLink(text);

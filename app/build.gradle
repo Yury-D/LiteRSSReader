@@ -41,4 +41,6 @@ dependencies {
     compile files('C:/JAVA_Project/Android/LiteRSSReader/submodules/ormlite-android-4.48.jar')
     compile files('C:/JAVA_Project/Android/LiteRSSReader/submodules/ormlite-android-4.48-sources.jar')
     compile files('C:/JAVA_Project/Android/LiteRSSReader/submodules/ormlite-core-4.48.jar')
+    // You must install or update the Support Repository through the SDK manager to use this dependency.
+    compile 'com.android.support:support-v4:19.+'
 }

@@ -8,15 +8,21 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.io.Serializable;
+import java.net.URL;
+import java.sql.SQLException;
 import java.util.Collection;
-import java.util.List;
+
+import testproject.ambal.literssreader.ORM.HelperFactory;
 
 @DatabaseTable(tableName = "Channel")
-public class Channel {
+public class Channel implements Serializable{
 
     @DatabaseField(generatedId = true)
     int id;
-    @DatabaseField(index = true)
+    @DatabaseField
+    URL url;
+    @DatabaseField
     String title;
     @DatabaseField
     String link;
@@ -30,28 +36,43 @@ public class Channel {
     Collection<Item> items;
 
 
+    public void addItem(Item item){
+        item.setChannel(this);
+        try {
+            HelperFactory.getHelper().getItemDao().create(item);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        items.add(item);
+    }
+
+
     public Channel() {
         // needed by ormlite
     }
 
-    public Channel(int id, String title, String link, String description, String language, String lastBuildDate) {
+    public Channel(int id, URL url, String title, String link, String description, String language, String lastBuildDate, Collection<Item> items) {
         this.id = id;
+        this.url = url;
         this.title = title;
         this.link = link;
         this.description = description;
         this.language = language;
         this.lastBuildDate = lastBuildDate;
+        this.items = items;
     }
 
     @Override
     public String toString() {
         return "Channel{" +
                 "id=" + id +
+                ", url=" + url +
                 ", title='" + title + '\'' +
                 ", link='" + link + '\'' +
                 ", description='" + description + '\'' +
                 ", language='" + language + '\'' +
                 ", lastBuildDate='" + lastBuildDate + '\'' +
+                ", items=" + items +
                 '}';
     }
 
@@ -61,6 +82,14 @@ public class Channel {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public URL getUrl() {
+        return url;
+    }
+
+    public void setUrl(URL url) {
+        this.url = url;
     }
 
     public String getTitle() {
@@ -105,6 +134,6 @@ public class Channel {
 
     public Collection<Item> getItems() { return items;  }
 
-    public void setItems(List<Item> items) { this.items = items; }
+    public void setItems(Collection<Item> items) { this.items = items; }
 }
 

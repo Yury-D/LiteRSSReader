@@ -12,44 +12,27 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="fill_parent"
+        android:id="@+id/button_keeper">
 
-        <TextView
+
+        <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/tut.by"
-            android:onClick="tut.by"
-            android:clickable="true"
-            android:drawablePadding="10dp"
-            android:padding="10dp"
-            android:textSize="18sp"
-            android:textStyle="italic"
-            android:id="@+id/textView"
-            android:layout_alignParentEnd="false"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:textColor="@color/abs__background_holo_dark"/>
-
-        <TextView
+            android:id="@+id/editText"
+            android:text="@string/enter_text" android:inputType="text"
+            android:editable="true"
+        />
+        <Button
+            style="@style/btnStylemedium_blue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/onliner.by"
-            android:onClick="onliner.by"
-            android:clickable="true"
-            android:drawablePadding="10dp"
-            android:padding="10dp"
-            android:textSize="18sp"
-            android:textStyle="italic"
-            android:id="@+id/textView2"
-            android:textColor="@color/abs__background_holo_dark"
-            android:layout_below="@+id/textView"
-            android:layout_alignLeft="@+id/textView"
-            android:layout_alignStart="@+id/textView" />
+            android:onClick="addFeed"
+            android:id="@+id/btn_add"
+            android:text="@string/add_fedd" />
 
-        <ListView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/listView" />
+
+
     </LinearLayout>
 
 
