@@ -55,11 +55,7 @@ public class DataUpdater extends AsyncTask<String, Void, List<Channel>> {
         for (String url: urls) {
             mDownloader = new Downloader(url);
             Channel downloadedChannel = parser.parse(mDownloader.download());
-            try {
-                downloadedChannel.setUrl(new URL(url));
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
+            downloadedChannel.setUrl(url);
             //проверяем, есть ли такой фид в базе
             List<Channel> sameChannels = Collections.EMPTY_LIST;
             List<Channel> samePubDates = Collections.EMPTY_LIST;
