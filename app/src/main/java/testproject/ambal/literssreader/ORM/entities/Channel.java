@@ -21,7 +21,7 @@ public class Channel implements Serializable{
     @DatabaseField(generatedId = true)
     int id;
     @DatabaseField
-    URL url;
+    String url;
     @DatabaseField
     String title;
     @DatabaseField
@@ -51,7 +51,7 @@ public class Channel implements Serializable{
         // needed by ormlite
     }
 
-    public Channel(int id, URL url, String title, String link, String description, String language, String lastBuildDate, Collection<Item> items) {
+    public Channel(int id, String url, String title, String link, String description, String language, String lastBuildDate, Collection<Item> items) {
         this.id = id;
         this.url = url;
         this.title = title;
@@ -84,11 +84,11 @@ public class Channel implements Serializable{
         this.id = id;
     }
 
-    public URL getUrl() {
+    public String getUrl() {
         return url;
     }
 
-    public void setUrl(URL url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 
