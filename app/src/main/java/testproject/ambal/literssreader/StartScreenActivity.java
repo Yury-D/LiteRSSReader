@@ -1,14 +1,13 @@
 package testproject.ambal.literssreader;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
@@ -24,25 +23,24 @@ import java.util.List;
 
 import testproject.ambal.literssreader.ORM.HelperFactory;
 import testproject.ambal.literssreader.ORM.entities.Channel;
-import testproject.ambal.literssreader.ORM.entities.Item;
 import testproject.ambal.literssreader.service.DataUpdater;
 
 
 public class StartScreenActivity extends SherlockActivity {
 
     private  EditText mText;
-    private Intent starterIntent;
+    private SharedPreferences sPref;
+    final String SAVED_TEXT = "saved_text";
+    String newFeed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
-
-        starterIntent = getIntent();
-
         LinearLayout buttonlayout = (LinearLayout)findViewById(R.id.button_keeper);
         mText = (EditText) findViewById(R.id.editText);
 
+        loadLastInput();
         //читаем список имеющихся каналов
         HelperFactory.setHelper(getApplicationContext());
         Dao<Channel, Integer> myChennelDao;
@@ -78,13 +76,11 @@ public class StartScreenActivity extends SherlockActivity {
 
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         MenuInflater inflater = getSupportMenuInflater();
         inflater.inflate(R.menu.start_screen_menu, menu);
-        //menuItem = menu.findItem(R.id.menuItem_load);
         return true;
     }
 
@@ -109,12 +105,13 @@ public class StartScreenActivity extends SherlockActivity {
             default:
                 break;
         }
-        return true;/*super.onOptionsItemSelected(item)*/
+        return true;
     }
 
     //"add Feed" button listener
     public void addFeed(View v) {
-        String newFeed = mText.getText().toString();
+        newFeed = mText.getText().toString();
+        saveLastInput();
         if (!URLUtil.isValidUrl(newFeed)){
             Toast.makeText(this, "Incorrect input URL", Toast.LENGTH_SHORT).show();
             return;
@@ -122,5 +119,20 @@ public class StartScreenActivity extends SherlockActivity {
         DataUpdater mUpdater = new DataUpdater(this);
         mUpdater.execute(newFeed);
     }
+
+    //для удобства сохраняем последний введенный URL
+    void saveLastInput() {
+        sPref = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor ed = sPref.edit();
+        ed.putString(SAVED_TEXT, newFeed);
+        ed.commit();
+    }
+
+    void loadLastInput() {
+        sPref = getPreferences(MODE_PRIVATE);
+        String savedText = sPref.getString(SAVED_TEXT, getString(R.string.defaultUrl));
+        mText.setText(savedText);
+    }
+
 
 }
