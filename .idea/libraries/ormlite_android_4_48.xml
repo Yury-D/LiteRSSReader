@@ -1,9 +1,11 @@
 <component name="libraryTable">
   <library name="ormlite-android-4.48">
     <CLASSES>
-      <root url="jar://C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-android-4.48.jar!/" />
+      <root url="jar://$PROJECT_DIR$/submodules/ormlite-android-4.48.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/submodules/ormlite-android-4.48-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

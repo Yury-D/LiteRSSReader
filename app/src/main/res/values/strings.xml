@@ -10,7 +10,7 @@
     <string name="download_error_message">Download error</string>
     <string name="progress_dialog_message">Please Wait...</string>
     <string name="add_fedd">add feed</string>
-    <string name="enter_text">http://<!--Enter your URL here--></string>
+    <string name="enter_text">http://auto.onliner.by/feed<!--Enter your URL here--></string>
     <string name="defaultUrl">http://</string>
 
 </resources>

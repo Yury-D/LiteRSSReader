@@ -63,6 +63,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="ormlite-android-4.48" level="project" />
     <orderEntry type="library" exported="" name="1_ormlite-android-4.48" level="project" />
+    <orderEntry type="library" exported="" name="HockeySDK-3.0.2" level="project" />
     <orderEntry type="library" exported="" name="ormlite-core-4.48" level="project" />
     <orderEntry type="library" exported="" name="1_ormlite-core-4.48" level="project" />
     <orderEntry type="library" exported="" name="ormlite-core-4.48-sources" level="project" />

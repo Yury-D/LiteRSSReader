@@ -24,6 +24,10 @@ import testproject.ambal.literssreader.ORM.HelperFactory;
 import testproject.ambal.literssreader.ORM.entities.Channel;
 import testproject.ambal.literssreader.service.DataUpdater;
 
+import net.hockeyapp.android.CrashManager;
+import net.hockeyapp.android.UpdateManager;
+
+
 
 public class StartScreenActivity extends SherlockActivity {
 
@@ -132,6 +136,23 @@ public class StartScreenActivity extends SherlockActivity {
         String savedText = sPref.getString(SAVED_TEXT, getString(R.string.defaultUrl));
         mText.setText(savedText);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkForCrashes();
+        checkForUpdates();
+    }
+
+    private void checkForCrashes() {
+        CrashManager.register(this, "e9beebfb7cff09c7dcbec9900b91f5a2");
+    }
+
+    private void checkForUpdates() {
+        // Remove this for store builds!
+        UpdateManager.register(this, "e9beebfb7cff09c7dcbec9900b91f5a2");
+    }
+
 
 
 }

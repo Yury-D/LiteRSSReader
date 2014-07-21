@@ -32,8 +32,8 @@ public class Parser {
     private static final String TAG_CATEGORY = "category";
     private static final String TAG_AUTHOR = "name";
     private static final String TAG_CREATOR = "creator";
-    private static final String TAG_IMG = "img"; //&#x3C
-    private static final String TAG_THUMBNAIL = "thumbnail"; //&#x3C
+    private static final String TAG_IMG = "img";
+    private static final String TAG_THUMBNAIL = "thumbnail";
 
     private static final String LOG_TAG = "mylogs";
 
