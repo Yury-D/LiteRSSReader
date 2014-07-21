@@ -18,18 +18,24 @@ import testproject.ambal.literssreader.ORM.entities.Item;
  * Created by Ambal on 18.07.14.
  */
 public class Parser {
+
     // RSS XML document CHANNEL tag
-    private static String TAG_CHANNEL = "channel";
-    private static String TAG_TITLE = "title";
-    private static String TAG_LINK = "link";
-    private static String TAG_DESRIPTION = "description";
-    private static String TAG_LANGUAGE = "language";
-    private static String TAG_ITEM = "item";
-    private static String TAG_PUB_DATE = "pubDate";
-    private static String TAG_ENCLOSURE = "enclosure";
-    private static String TAG_LAST_BUILD_DATE = "lastBuildDate";
-    private static String TAG_CATEGORY = "category";
-    private static String TAG_AUTHOR = "atom:author";
+    private static final String TAG_CHANNEL = "channel";
+    private static final String TAG_TITLE = "title";
+    private static final String TAG_LINK = "link";
+    private static final String TAG_DESRIPTION = "description";
+    private static final String TAG_LANGUAGE = "language";
+    private static final String TAG_ITEM = "item";
+    private static final String TAG_PUB_DATE = "pubDate";
+    private static final String TAG_ENCLOSURE = "enclosure";
+    private static final String TAG_LAST_BUILD_DATE = "pubDate";
+    private static final String TAG_CATEGORY = "category";
+    private static final String TAG_AUTHOR = "name";
+    private static final String TAG_CREATOR = "creator";
+    private static final String TAG_IMG = "img"; //&#x3C
+    private static final String TAG_THUMBNAIL = "thumbnail"; //&#x3C
+
+    private static final String LOG_TAG = "mylogs";
 
 
     List<Item> items;
@@ -55,13 +61,18 @@ public class Parser {
             myParser.setInput(new ByteArrayInputStream(target.getBytes()), null);
 
             int eventType = myParser.getEventType();
-            ChannelScan: while (eventType != XmlPullParser.END_DOCUMENT) {
+            ChannelScan:
+            while (eventType != XmlPullParser.END_DOCUMENT) {
                 String tagname = myParser.getName();
                 switch (eventType) {
                     case XmlPullParser.START_TAG:
                         if (tagname.equalsIgnoreCase(TAG_CHANNEL)) {
                             // create a new instance of channel
                             channel = new Channel();
+                        }
+                        //если начались айтемы, то описание фида закончено
+                        if (tagname.equalsIgnoreCase(TAG_ITEM)) {
+                            break ChannelScan;
                         }
                         break;
 
@@ -82,7 +93,7 @@ public class Parser {
                             channel.setLanguage(text);
                         } else if (tagname.equalsIgnoreCase(TAG_LAST_BUILD_DATE)) {
                             channel.setLastBuildDate(text);
-                            break ChannelScan;
+
                         }
                         break;
                     default:
@@ -98,6 +109,7 @@ public class Parser {
 
             eventType = myParser.getEventType();
             while (eventType != XmlPullParser.END_DOCUMENT) {
+
                 String tagname = myParser.getName();
                 switch (eventType) {
                     case XmlPullParser.START_TAG:
@@ -105,6 +117,18 @@ public class Parser {
                             // create a new instance of item
                             item = new Item();
                             insideItem = true;
+                        }
+                        //костыль, т.к. извлечь ссылку на иконку из атрибута тега img
+                        // не получилось (парсер не находит такой тег), пришлось
+                        //взять ссылку на полноразмерную картинку и вручную изменить
+                        if (tagname.equalsIgnoreCase(TAG_ENCLOSURE)) {
+                            String thumbnailLink = myParser.getAttributeValue(0);
+                            String _thumbnailLink = thumbnailLink.replace("/n/", "/thumbnails/n/");
+                            item.setEnclosure(_thumbnailLink);
+                        }
+                        if (tagname.equalsIgnoreCase(TAG_THUMBNAIL)) {
+                            String thumbnailLink = myParser.getAttributeValue(0);
+                            item.setEnclosure(thumbnailLink);
                         }
                         break;
 
@@ -125,12 +149,10 @@ public class Parser {
                                 item.setLink(text);
                             } else if (tagname.equalsIgnoreCase(TAG_DESRIPTION)) {
                                 item.setDescription(text);
-                            } else if (tagname.equalsIgnoreCase(TAG_AUTHOR)) {
+                            } else if (tagname.equalsIgnoreCase(TAG_AUTHOR) || tagname.equalsIgnoreCase(TAG_CREATOR)) {
                                 item.setAuthor(text);
                             } else if (tagname.equalsIgnoreCase(TAG_CATEGORY)) {
                                 item.setCategory(text);
-                            } else if (tagname.equalsIgnoreCase(TAG_ENCLOSURE)) {
-                                item.setEnclosure(text);
                             } else if (tagname.equalsIgnoreCase(TAG_PUB_DATE)) {
                                 item.setPubDate(text);
                             }
