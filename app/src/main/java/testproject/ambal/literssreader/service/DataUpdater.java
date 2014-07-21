@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -18,6 +19,7 @@ import java.util.List;
 
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+
 import testproject.ambal.literssreader.ORM.HelperFactory;
 import testproject.ambal.literssreader.ORM.entities.Channel;
 import testproject.ambal.literssreader.ORM.entities.Item;
@@ -32,6 +34,7 @@ public class DataUpdater extends AsyncTask<String, Void, List<Channel>> {
     private Context mContext;
     private ProgressDialog dialog;
     private Downloader mDownloader;
+    private static final String LOG_TAG = "mylogs";
 
     //данный конструктор нужен чтобы передать контекст в AsyncTask
     public DataUpdater(Context context) {
@@ -52,43 +55,62 @@ public class DataUpdater extends AsyncTask<String, Void, List<Channel>> {
     protected List<Channel> doInBackground(String... urls) {
         List<Channel> result = new ArrayList<Channel>();
         Parser parser = new Parser();
-        for (String url: urls) {
+        for (String url : urls) {
             mDownloader = new Downloader(url);
-            Channel downloadedChannel = parser.parse(mDownloader.download());
-            downloadedChannel.setUrl(url);
-            //проверяем, есть ли такой фид в базе
-            List<Channel> sameChannels = Collections.EMPTY_LIST;
-            List<Channel> samePubDates = Collections.EMPTY_LIST;
-            try {
-                sameChannels = HelperFactory.getHelper().getChannelDao().queryForEq("title", downloadedChannel.getTitle());
-                samePubDates = HelperFactory.getHelper().getChannelDao().queryForEq("lastBuildDate", downloadedChannel.getLastBuildDate());
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            result.add(downloadedChannel);
 
-            boolean sameChanelDetected = sameChannels.size() > 0; //если >0, то в базе уже есть фиф с таким заголовком
-            boolean laterPubDateDetected = !(samePubDates.size() > 0);//есть >0, то дата публикации одинакова
+            String stringDownloadedChannel = mDownloader.download();
 
-            //добавляем в базу, если такого фида нет, либо если фид есть, и дата публикации более поздняя
-            if (!sameChanelDetected || (sameChanelDetected & (laterPubDateDetected))) {
-                //сохраняем в базу данные о фиде
+            //если что нибудь скачалось, пытаемся парсить, иначе вернем пустой List
+            parse:
+            if (null != stringDownloadedChannel) {
+                Channel downloadedChannel = null;
                 try {
-                    HelperFactory.getHelper().getChannelDao().create(downloadedChannel);
+                    downloadedChannel = parser.parse(stringDownloadedChannel);
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                    Log.e(LOG_TAG, "incorrect downloaded data, not rss link?");
+                    break parse;
+                }
+
+                downloadedChannel.setUrl(url);
+                //проверяем, есть ли такой фид в базе
+                List<Channel> sameChannels = Collections.EMPTY_LIST;
+                List<Channel> samePubDates = Collections.EMPTY_LIST;
+                try {
+                    sameChannels = HelperFactory.getHelper().getChannelDao().queryForEq("title", downloadedChannel.getTitle());
+                    samePubDates = HelperFactory.getHelper().getChannelDao().queryForEq("lastBuildDate", downloadedChannel.getLastBuildDate());
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                //сохраняем в базу айтемы фида - заголовки новостей
-                Collection<Item> items = downloadedChannel.getItems();
-                for (Iterator<Item> iterator = items.iterator(); iterator.hasNext(); ) {
+                result.add(downloadedChannel);
+
+                boolean sameChanelDetected = sameChannels.size() > 0; //если >0, то в базе уже есть фиф с таким заголовком
+                boolean laterPubDateDetected = !(samePubDates.size() > 0);//есть >0, то дата публикации одинакова
+
+                //добавляем в базу, если такого фида нет, либо если фид есть, и дата публикации более поздняя
+                if (!sameChanelDetected || (sameChanelDetected & (laterPubDateDetected))) {
+                    //сохраняем в базу данные о фиде
                     try {
-                        HelperFactory.getHelper().getItemDao().create(iterator.next());
+                        //предварительно удалив старый фид с таким же заголовком
+                        if (sameChanelDetected) {
+                            HelperFactory.getHelper().getChannelDao().deleteById(sameChannels.get(0).getId());
+                        }
+                        HelperFactory.getHelper().getChannelDao().create(downloadedChannel);
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
+                    //сохраняем в базу айтемы фида - заголовки новостей
+                    Collection<Item> items = downloadedChannel.getItems();
+                    for (Iterator<Item> iterator = items.iterator(); iterator.hasNext(); ) {
+                        try {
+                            HelperFactory.getHelper().getItemDao().create(iterator.next());
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
-            }
 
+            }
         }
         return result;
     }
@@ -96,7 +118,9 @@ public class DataUpdater extends AsyncTask<String, Void, List<Channel>> {
     @Override
     protected void onPostExecute(List<Channel> result) {
         super.onPostExecute(result);
-        //Toast.makeText(mContext, result, Toast.LENGTH_LONG).show();
+        if (result.isEmpty()) {
+            Toast.makeText(mContext, "Feed not found", Toast.LENGTH_LONG).show();
+        }
         if (this.dialog.isShowing()) {
             this.dialog.dismiss();
         }

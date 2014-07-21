@@ -3,8 +3,8 @@ package testproject.ambal.literssreader;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.View;
-import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -18,7 +18,6 @@ import com.j256.ormlite.dao.Dao;
 
 import java.sql.SQLException;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import testproject.ambal.literssreader.ORM.HelperFactory;
@@ -53,8 +52,7 @@ public class StartScreenActivity extends SherlockActivity {
             e.printStackTrace();
         }
         //создаем по кнопке на канал
-        for (Iterator<Channel> mIterator = myChannels.iterator(); mIterator.hasNext();){
-            final Channel channel = mIterator.next();
+        for (final Channel channel : myChannels) {
             Button myButton = new Button(this);
             myButton.setText(channel.getTitle());
             myButton.setBackgroundResource(R.drawable.custom_btn_blue);
@@ -112,7 +110,8 @@ public class StartScreenActivity extends SherlockActivity {
     public void addFeed(View v) {
         newFeed = mText.getText().toString();
         saveLastInput();
-        if (!URLUtil.isValidUrl(newFeed)){
+
+        if (!Patterns.WEB_URL.matcher(newFeed).matches()) {
             Toast.makeText(this, "Incorrect input URL", Toast.LENGTH_SHORT).show();
             return;
         }

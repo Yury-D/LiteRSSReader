@@ -11,5 +11,6 @@
     <string name="progress_dialog_message">Please Wait...</string>
     <string name="add_fedd">add feed</string>
     <string name="enter_text">http://<!--Enter your URL here--></string>
+    <string name="defaultUrl">http://</string>
 
 </resources>

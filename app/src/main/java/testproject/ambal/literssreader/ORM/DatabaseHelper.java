@@ -30,7 +30,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String DATABASE_NAME = "FeedContent.db";
     private static final int DATABASE_VERSION = 1;
 
-    //ссылки на DAO соответсвующие сущностям, хранимым в БД
+    //ссылки на DAO, соответсвующие сущностям, хранимым в БД
     private Dao<Item, Integer> simpleItemDao = null;
     private Dao<Channel, Integer> simpleChannelDao = null;
 
@@ -86,8 +86,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         return simpleChannelDao;
     }
 
-
-    //выполняется при закрытии приложения
     @Override
     public void close() {
         super.close();

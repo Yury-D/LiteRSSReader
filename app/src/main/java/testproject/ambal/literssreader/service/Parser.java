@@ -31,7 +31,6 @@ public class Parser {
     private static String TAG_CATEGORY = "category";
     private static String TAG_AUTHOR = "atom:author";
 
-    private static final String TAG = "mylogs";
 
     List<Item> items;
     private Item item;
@@ -42,7 +41,7 @@ public class Parser {
         items = new ArrayList<Item>();
     }
 
-    public Channel parse(String target){
+    public Channel parse(String target) throws NullPointerException {
         XmlPullParserFactory factory = null;
         XmlPullParser myParser = null;
         try {
