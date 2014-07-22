@@ -2,6 +2,7 @@ package testproject.ambal.literssreader;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +28,7 @@ import testproject.ambal.literssreader.ORM.entities.Item;
 import testproject.ambal.literssreader.dummy.DummyContent;
 
 public class ItemFragment extends SherlockFragment implements AbsListView.OnItemClickListener {
-
+    private static final String LOG_TAG = "mylogs";
     private static final String ARG_PARAM1 = "param1";
 
     private OnFragmentInteractionListener mListener;
@@ -200,7 +201,7 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
             holder.tvTitle.setText(items.get(position).getTitle());
 
             //приводим дату в нормальный формат гггг-мм-дд чч:cc - пример 2000-04-01 00:00
-            SimpleDateFormat defFormat = new SimpleDateFormat("EEE, mm MMM yyyy HH:mm:ssZ", Locale.getDefault());
+            SimpleDateFormat defFormat = new SimpleDateFormat("EEE, mm MMM yyyy HH:mm:ss Z", Locale.US);
             Date formattedDate = new Date();
             try {
                 formattedDate = defFormat.parse(items.get(position).getPubDate());
