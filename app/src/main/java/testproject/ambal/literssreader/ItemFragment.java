@@ -1,25 +1,31 @@
 package testproject.ambal.literssreader;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -28,20 +34,12 @@ import testproject.ambal.literssreader.ORM.entities.Item;
 import testproject.ambal.literssreader.dummy.DummyContent;
 
 public class ItemFragment extends SherlockFragment implements AbsListView.OnItemClickListener {
-    private static final String LOG_TAG = "mylogs";
-    private static final String ARG_PARAM1 = "param1";
+    //private static final String ARG_PARAM1 = "param1";
+    static DisplayImageOptions options;
+    private static List<String> iconUrls;
 
     private OnFragmentInteractionListener mListener;
-
-    /**
-     * The fragment's ListView/GridView.
-     */
     private AbsListView mListView;
-
-    /**
-     * The Adapter which will be used to populate the ListView/GridView with
-     * Views.
-     */
     private ListAdapter mAdapter;
     private static List<Item> sItems;
 
@@ -51,6 +49,19 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
         //ArrayList<String> titles = new ArrayList<String>(channel.getItems().size());
 
         sItems = new ArrayList<Item>(channel.getItems());
+        for (Item sItem : sItems) {
+            iconUrls.add(sItem.getEnclosure());
+        }
+        options = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.drawable.ic_stub)
+                .showImageForEmptyUri(R.drawable.ic_empty)
+                .showImageOnFail(R.drawable.ic_error)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true)
+                .displayer(new RoundedBitmapDisplayer(20))
+                .build();
+
         /*for (Item mItem : sItems) {
             titles.add(mItem.getTitle());
         }
@@ -157,9 +168,6 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
         public void onFragmentInteraction(String id);
     }
 
-
-
-
     private class CustomAdapter extends ArrayAdapter<Item> {
         private LayoutInflater inflater;
         private ArrayList<Item> items;
@@ -216,9 +224,22 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
 
 
 
+    private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
 
+        static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
 
-
+        @Override
+        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+            if (loadedImage != null) {
+                ImageView imageView = (ImageView) view;
+                boolean firstDisplay = !displayedImages.contains(imageUri);
+                if (firstDisplay) {
+                    FadeInBitmapDisplayer.animate(imageView, 500);
+                    displayedImages.add(imageUri);
+                }
+            }
+        }
+    }
 
 
 
