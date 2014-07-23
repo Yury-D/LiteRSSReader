@@ -18,7 +18,7 @@ import testproject.ambal.literssreader.ORM.HelperFactory;
 @DatabaseTable(tableName = "Channel")
 public class Channel implements Serializable{
 
-    @DatabaseField(generatedId = true)
+    @DatabaseField(generatedId = true, allowGeneratedIdInsert = true)
     int id;
     @DatabaseField
     String url;

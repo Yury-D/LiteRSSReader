@@ -61,7 +61,7 @@ public class DataUpdater extends AsyncTask<String, Void, List<Channel>> {
             String stringDownloadedChannel = mDownloader.download();
 
             //если что нибудь скачалось, пытаемся парсить, иначе вернем пустой List
-            parse:
+            save:
             if (null != stringDownloadedChannel) {
                 Channel downloadedChannel = null;
                 try {
@@ -69,41 +69,49 @@ public class DataUpdater extends AsyncTask<String, Void, List<Channel>> {
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                     Log.e(LOG_TAG, "incorrect downloaded data, not rss link?");
-                    break parse;
+                    break save;
                 }
-
                 downloadedChannel.setUrl(url);
+                result.add(downloadedChannel);
                 //проверяем, есть ли такой фид в базе
                 List<Channel> sameChannels = Collections.EMPTY_LIST;
                 List<Channel> samePubDates = Collections.EMPTY_LIST;
                 try {
-                    sameChannels = HelperFactory.getHelper().getChannelDao().queryForEq("title", downloadedChannel.getTitle());
-                    samePubDates = HelperFactory.getHelper().getChannelDao().queryForEq("lastBuildDate", downloadedChannel.getLastBuildDate());
+                    sameChannels = HelperFactory.getHelper().getChannelDao().queryForEq("title",
+                            downloadedChannel.getTitle());
+                    samePubDates = HelperFactory.getHelper().getChannelDao().queryForEq("lastBuildDate",
+                            downloadedChannel.getLastBuildDate());
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                result.add(downloadedChannel);
 
-                boolean sameChanelDetected = sameChannels.size() > 0; //если >0, то в базе уже есть фиф с таким заголовком
-                boolean laterPubDateDetected = !(samePubDates.size() > 0);//есть >0, то дата публикации одинакова
-
+                boolean sameChanelDetected = sameChannels.size() > 0; //если >0, то в базе уже есть фид с таким заголовком
+                boolean laterPubDateDetected = !(samePubDates.size() > 0);//если >0, то дата публикации одинакова
                 //добавляем в базу, если такого фида нет, либо если фид есть, и дата публикации более поздняя
                 if (!sameChanelDetected || (sameChanelDetected & (laterPubDateDetected))) {
                     //сохраняем в базу данные о фиде
                     try {
-                        //предварительно удалив старый фид с таким же заголовком
+                        //предварительно удалив старый фид с таким же заголовком и все его айтемы
+                        int oldId = 0;
                         if (sameChanelDetected) {
+                            oldId = HelperFactory.getHelper().getChannelDao().extractId(sameChannels.get(0));
+                            List<Item> itemsForDelete = HelperFactory.getHelper().getItemDao().queryForEq("channel_id",
+                                    sameChannels.get(0).getId());
+                            HelperFactory.getHelper().getItemDao().delete(itemsForDelete);
                             HelperFactory.getHelper().getChannelDao().deleteById(sameChannels.get(0).getId());
                         }
+                        //чтобы id не менялись при апдейте, сохраняем старый и здесь применяем его к новому
+                        downloadedChannel.setId(oldId);
                         HelperFactory.getHelper().getChannelDao().create(downloadedChannel);
+                        //HelperFactory.getHelper().getChannelDao().updateId(downloadedChannel, oldId);
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
                     //сохраняем в базу айтемы фида - заголовки новостей
                     Collection<Item> items = downloadedChannel.getItems();
-                    for (Iterator<Item> iterator = items.iterator(); iterator.hasNext(); ) {
+                    for (Item item : items) {
                         try {
-                            HelperFactory.getHelper().getItemDao().create(iterator.next());
+                            HelperFactory.getHelper().getItemDao().create(item);
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }

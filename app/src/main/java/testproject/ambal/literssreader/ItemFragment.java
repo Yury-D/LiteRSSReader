@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
@@ -49,6 +50,7 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
         //ArrayList<String> titles = new ArrayList<String>(channel.getItems().size());
 
         sItems = new ArrayList<Item>(channel.getItems());
+        iconUrls = new ArrayList<String>(channel.getItems().size());
         for (Item sItem : sItems) {
             iconUrls.add(sItem.getEnclosure());
         }
@@ -175,6 +177,7 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
         private class ViewHolder {
             TextView tvTitle;
             TextView tvPubDate;
+            ImageView imageView;
         }
 
         public CustomAdapter(ArrayList<Item> items) {
@@ -202,6 +205,7 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
                 convertView = inflater.inflate(R.layout.item, null);
                 holder.tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
                 holder.tvPubDate = (TextView) convertView.findViewById(R.id.tvPubDate);
+                holder.imageView = (ImageView) convertView.findViewById(R.id.imageView);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
@@ -218,6 +222,9 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
             }
             SimpleDateFormat newFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
             holder.tvPubDate.setText(newFormat.format(formattedDate));
+
+            ImageLoader.getInstance().displayImage(iconUrls.get(position), holder.imageView);
+            //holder.imageView.setImageBitmap(ImageLoader.getInstance().loadImageSync(iconUrls.get(position)));
             return convertView;
         }
     }

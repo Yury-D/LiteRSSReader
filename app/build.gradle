@@ -21,30 +21,19 @@ android {
         exclude 'com/j256/ormlite/android/README.txt'
         exclude 'com/j256/ormlite/core/README.txt'
         exclude 'com/j256/ormlite/core/LICENSE.txt'
-
-
     }
     productFlavors {
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    //compile 'com.android.support:appcompat-v7:19.+'
+    //compile fileTree(dir: 'libs', include: ['*.jar'])
+
     compile project(':submodules:actionbarsherlock')
-    compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-android-4.48.jar')
-    //compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-android-4.48-javadoc.jar')
-    compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-android-4.48-sources.jar')
-    compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-core-4.48.jar')
-    //compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-core-4.48-javadoc.jar')
-    compile files('C:/!JAVA/Android/LiteRSSReader/submodules/ormlite-core-4.48-sources.jar')
-    compile files('C:/JAVA_Project/Android/LiteRSSReader/submodules/ormlite-android-4.48.jar')
-    compile files('C:/JAVA_Project/Android/LiteRSSReader/submodules/ormlite-android-4.48-sources.jar')
-    compile files('C:/JAVA_Project/Android/LiteRSSReader/submodules/ormlite-core-4.48.jar')
-    // You must install or update the Support Repository through the SDK manager to use this dependency.
     compile 'com.android.support:support-v4:19.+'
-    compile files('libs/HockeySDK-3.0.2.jar')
-    compile files('C:/!JAVA/Android/LiteRSSReader/submodules/universal-image-loader-1.9.2.jar')
-    compile files('C:/!JAVA/Android/LiteRSSReader/submodules/universal-image-loader-1.9.2-javadoc.jar')
-    compile files('C:/!JAVA/Android/LiteRSSReader/submodules/universal-image-loader-1.9.2-sources.jar')
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.2'
+    compile 'net.hockeyapp.android:HockeySDK:3.0.2'
+    compile 'com.j256.ormlite:ormlite-android:4.48'
+    compile 'com.j256.ormlite:ormlite-core:4.48'
+
 }
