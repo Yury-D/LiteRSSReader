@@ -144,7 +144,7 @@ public class Parser {
                                 items.add(item);
                                 insideItem = false;
                             } else if (tagname.equalsIgnoreCase(TAG_TITLE)) {
-                                item.setTitle(text);
+                                item.setTitle(text.replace("&nbsp", ""));
                             } else if (tagname.equalsIgnoreCase(TAG_LINK)) {
                                 item.setLink(text);
                             } else if (tagname.equalsIgnoreCase(TAG_DESRIPTION)) {

@@ -60,8 +60,8 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
                 .showImageOnFail(R.drawable.ic_error)
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
-                .considerExifParams(true)
-                .displayer(new RoundedBitmapDisplayer(20))
+                //.considerExifParams(true)
+                //.displayer(new RoundedBitmapDisplayer(20))
                 .build();
 
         /*for (Item mItem : sItems) {
@@ -223,8 +223,7 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
             SimpleDateFormat newFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
             holder.tvPubDate.setText(newFormat.format(formattedDate));
 
-            ImageLoader.getInstance().displayImage(iconUrls.get(position), holder.imageView);
-            //holder.imageView.setImageBitmap(ImageLoader.getInstance().loadImageSync(iconUrls.get(position)));
+            ImageLoader.getInstance().displayImage(iconUrls.get(position), holder.imageView, options);
             return convertView;
         }
     }
