@@ -54,9 +54,9 @@ public class DataUpdater extends AsyncTask<String, Void, List<Channel>> {
     @Override
     protected List<Channel> doInBackground(String... urls) {
         List<Channel> result = new ArrayList<Channel>();
-        Parser parser = new Parser();
         for (String url : urls) {
             mDownloader = new Downloader(url);
+            Parser parser = new Parser();
 
             String stringDownloadedChannel = mDownloader.download();
 
