@@ -56,7 +56,7 @@ public class Item {
                 ", category='" + category + '\'' +
                 ", enclosure='" + enclosure + '\'' +
                 ", pubDate='" + pubDate + '\'' +
-                ", channel=" + channel +
+                ", channel=" +  +
                 '}';
     }
 
