@@ -69,10 +69,10 @@ public class Channel implements Serializable{
                 ", url=" + url +
                 ", title='" + title + '\'' +
                 ", link='" + link + '\'' +
-                ", description='" + description + '\'' +
+                ", description='" +  + '\'' +
                 ", language='" + language + '\'' +
                 ", lastBuildDate='" + lastBuildDate + '\'' +
-                ", items=" + items +
+                ", items=" +  +
                 '}';
     }
 
