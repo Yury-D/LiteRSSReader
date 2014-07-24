@@ -22,6 +22,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,14 +36,15 @@ import net.hockeyapp.android.UpdateManager;
 
 
 public class StartScreenActivity extends SherlockActivity {
-
+    private List<Channel> myChannels;
     private  EditText mText;
     private SharedPreferences sPref;
-    final String SAVED_TEXT = "saved_text";
-    String newFeed;
+    private final String SAVED_TEXT = "saved_text";
+    private String newFeed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
         LinearLayout buttonlayout = (LinearLayout)findViewById(R.id.button_keeper);
@@ -52,8 +54,7 @@ public class StartScreenActivity extends SherlockActivity {
         //читаем список имеющихся каналов
         HelperFactory.setHelper(getApplicationContext());
         Dao<Channel, Integer> myChennelDao;
-        List<Channel> myChannels = Collections.EMPTY_LIST;
-
+        myChannels = Collections.EMPTY_LIST;
         try {
             myChennelDao = HelperFactory.getHelper().getChannelDao();
             myChannels = myChennelDao.queryForAll();
@@ -94,7 +95,7 @@ public class StartScreenActivity extends SherlockActivity {
                 .diskCacheFileNameGenerator(new Md5FileNameGenerator())
                 .diskCacheSize(50 * 1024 * 1024) // 50 Mb
                 .tasksProcessingOrder(QueueProcessingType.LIFO)
-                .writeDebugLogs() // Remove for release app
+                .writeDebugLogs() //TODO Remove for release app
                 .build();
         // Initialize ImageLoader with configuration.
         ImageLoader.getInstance().init(config);
@@ -114,12 +115,16 @@ public class StartScreenActivity extends SherlockActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
-            case R.id.menuItem_load: {
-                //item.setActionView(R.layout.progressbar);
+            case R.id.menuItem_update: {
                 DataUpdater mDataUpdater = new DataUpdater(this);
-                mDataUpdater.execute("http://news.tut.by/rss/auto/autobusiness.rss");
-                //item.collapseActionView();
-                //item.setActionView(null);
+                List<String> currentChannelsUrls = new ArrayList<String>();
+                for (Channel mChannel: myChannels){
+                    currentChannelsUrls.add(mChannel.getUrl());
+                }
+                String[] urls = new String[myChannels.size()];
+                urls = currentChannelsUrls.toArray(urls);
+                Toast.makeText(this, String.valueOf(urls.length), Toast.LENGTH_SHORT).show();
+                mDataUpdater.execute(urls);
                 break;
             }
             case R.id.menuItem_settings: {
