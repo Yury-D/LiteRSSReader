@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
@@ -27,6 +28,8 @@ public class DetailFeedActivity extends SherlockFragmentActivity implements Item
         try {
             mChannel = HelperFactory.getHelper().getChannelDao().queryForId(channelId);
             Log.d("mylog", mChannel.toString());
+            ActionBar actionBar = getSupportActionBar();
+            actionBar.setTitle(mChannel.getTitle());
         } catch (SQLException e) {
             e.printStackTrace();
         }
