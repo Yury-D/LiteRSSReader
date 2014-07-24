@@ -3,6 +3,7 @@ package testproject.ambal.literssreader;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,13 +13,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.text.ParseException;
@@ -33,6 +37,7 @@ import java.util.Locale;
 import testproject.ambal.literssreader.ORM.entities.Channel;
 import testproject.ambal.literssreader.ORM.entities.Item;
 import testproject.ambal.literssreader.dummy.DummyContent;
+import testproject.ambal.literssreader.service.DataUpdater;
 
 public class ItemFragment extends SherlockFragment implements AbsListView.OnItemClickListener {
     //private static final String ARG_PARAM1 = "param1";
@@ -42,13 +47,14 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
     private OnFragmentInteractionListener mListener;
     private AbsListView mListView;
     private ListAdapter mAdapter;
+    private static Channel currentChannel;
     private static List<Item> sItems;
 
     public static ItemFragment newInstance(Channel channel) {
         ItemFragment fragment = new ItemFragment();
         //Bundle args = new Bundle();
         //ArrayList<String> titles = new ArrayList<String>(channel.getItems().size());
-
+        currentChannel = channel;
         sItems = new ArrayList<Item>(channel.getItems());
         iconUrls = new ArrayList<String>(channel.getItems().size());
         for (Item sItem : sItems) {
@@ -83,6 +89,7 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         mAdapter = new CustomAdapter((ArrayList<Item>) sItems);
         /*
         ArrayList<String> titles = new ArrayList<String>();
@@ -111,8 +118,38 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
-
+        if (NavUtils.getParentActivityName(getActivity()) != null) {
+            getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.start_screen_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                if (NavUtils.getParentActivityName(getActivity()) != null) {
+                    NavUtils.navigateUpFromSameTask(getActivity());
+                }
+                return true;
+            case R.id.menuItem_update:
+                DataUpdater mDataUpdater = new DataUpdater(getSherlockActivity());
+                mDataUpdater.execute(currentChannel.getUrl());
+                return true;
+            case R.id.menuItem_settings: {
+                Toast.makeText(getSherlockActivity(), "Not implemented yet", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
     }
 
     @Override
