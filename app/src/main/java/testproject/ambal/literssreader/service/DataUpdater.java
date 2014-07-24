@@ -2,29 +2,23 @@ package testproject.ambal.literssreader.service;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.TableUtils;
 
 import testproject.ambal.literssreader.ORM.HelperFactory;
 import testproject.ambal.literssreader.ORM.entities.Channel;
 import testproject.ambal.literssreader.ORM.entities.Item;
 import testproject.ambal.literssreader.R;
-import testproject.ambal.literssreader.StartScreenActivity;
 
 /**
  * Created by Ambal on 18.07.14.
@@ -32,13 +26,15 @@ import testproject.ambal.literssreader.StartScreenActivity;
 
 public class DataUpdater extends AsyncTask<String, Void, List<Channel>> {
     private Context mContext;
+    private Handler mHandler;
     private ProgressDialog dialog;
     private Downloader mDownloader;
     private static final String LOG_TAG = "mylogs";
 
     //данный конструктор нужен чтобы передать контекст в AsyncTask
-    public DataUpdater(Context context) {
+    public DataUpdater(Context context, Handler handler) {
         mContext = context;
+        mHandler = handler;
         dialog = new ProgressDialog(mContext);
     }
 
@@ -72,7 +68,6 @@ public class DataUpdater extends AsyncTask<String, Void, List<Channel>> {
                     break save;
                 }
                 downloadedChannel.setUrl(url);
-                result.add(downloadedChannel);
                 //проверяем, есть ли такой фид в базе
                 List<Channel> sameChannels = Collections.EMPTY_LIST;
                 List<Channel> samePubDates = Collections.EMPTY_LIST;
@@ -103,6 +98,7 @@ public class DataUpdater extends AsyncTask<String, Void, List<Channel>> {
                         //чтобы id не менялись при апдейте, сохраняем старый и здесь применяем его к новому
                         downloadedChannel.setId(oldId);
                         HelperFactory.getHelper().getChannelDao().create(downloadedChannel);
+
                         //HelperFactory.getHelper().getChannelDao().updateId(downloadedChannel, oldId);
                     } catch (SQLException e) {
                         e.printStackTrace();
@@ -117,6 +113,11 @@ public class DataUpdater extends AsyncTask<String, Void, List<Channel>> {
                         }
                     }
                 }
+                if (!sameChanelDetected){
+                    // если фид был добавлен впервые, вернем его в UI, чтобы нарисовать кнопку для него
+                    result.add(downloadedChannel);
+                    Log.e(LOG_TAG, "added first time");
+                }
 
             }
         }
@@ -127,7 +128,11 @@ public class DataUpdater extends AsyncTask<String, Void, List<Channel>> {
     protected void onPostExecute(List<Channel> result) {
         super.onPostExecute(result);
         if (result.isEmpty()) {
-            Toast.makeText(mContext, "Feed not found", Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, "Feed already in base or not found", Toast.LENGTH_LONG).show();
+        }
+        if (!result.isEmpty()&&(result.size()==1)){
+            Message msg = mHandler.obtainMessage(0, result.get(0));
+            mHandler.sendMessage(msg);
         }
         if (this.dialog.isShowing()) {
             this.dialog.dismiss();

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -25,6 +27,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.LogRecord;
 
 import testproject.ambal.literssreader.ORM.HelperFactory;
 import testproject.ambal.literssreader.ORM.entities.Channel;
@@ -42,13 +45,43 @@ public class StartScreenActivity extends SherlockActivity {
     private final String SAVED_TEXT = "saved_text";
     private String newFeed;
 
+    private Handler mHandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
-        LinearLayout buttonlayout = (LinearLayout)findViewById(R.id.button_keeper);
+        final LinearLayout buttonlayout = (LinearLayout)findViewById(R.id.button_keeper);
         mText = (EditText) findViewById(R.id.editText);
+
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case 0:
+                        final Channel newChannel = (Channel) msg.obj;
+                        Button myButton = new Button(getBaseContext());
+                        myButton.setText(newChannel.getTitle());
+                        myButton.setBackgroundResource(R.drawable.custom_btn_blue);
+                        // создаем обработчик нажатия
+                        View.OnClickListener onClickListener = new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(getApplicationContext(), DetailFeedActivity.class);
+                                //передаем id фида в intent
+                                intent.putExtra("ChannelId", newChannel.getId());
+                                startActivity(intent);
+                            }
+                        };
+                        myButton.setOnClickListener(onClickListener);
+                        buttonlayout.addView(myButton);
+                        break;
+
+                }
+            }
+
+        };
 
         loadLastInput();
         //читаем список имеющихся каналов
@@ -116,14 +149,13 @@ public class StartScreenActivity extends SherlockActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.menuItem_update: {
-                DataUpdater mDataUpdater = new DataUpdater(this);
+                DataUpdater mDataUpdater = new DataUpdater(this, mHandler);
                 List<String> currentChannelsUrls = new ArrayList<String>();
                 for (Channel mChannel: myChannels){
                     currentChannelsUrls.add(mChannel.getUrl());
                 }
                 String[] urls = new String[myChannels.size()];
                 urls = currentChannelsUrls.toArray(urls);
-                Toast.makeText(this, String.valueOf(urls.length), Toast.LENGTH_SHORT).show();
                 mDataUpdater.execute(urls);
                 break;
             }
@@ -146,7 +178,7 @@ public class StartScreenActivity extends SherlockActivity {
             Toast.makeText(this, "Incorrect input URL", Toast.LENGTH_SHORT).show();
             return;
         }
-        DataUpdater mUpdater = new DataUpdater(this);
+        DataUpdater mUpdater = new DataUpdater(this, mHandler);
         mUpdater.execute(newFeed);
     }
 

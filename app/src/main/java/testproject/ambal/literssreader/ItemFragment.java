@@ -3,6 +3,7 @@ package testproject.ambal.literssreader;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.NavUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -139,7 +140,7 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
                 }
                 return true;
             case R.id.menuItem_update:
-                DataUpdater mDataUpdater = new DataUpdater(getSherlockActivity());
+                DataUpdater mDataUpdater = new DataUpdater(getSherlockActivity(), new Handler());
                 mDataUpdater.execute(currentChannel.getUrl());
                 return true;
             case R.id.menuItem_settings: {
