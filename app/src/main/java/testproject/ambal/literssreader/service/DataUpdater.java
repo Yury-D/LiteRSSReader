@@ -130,6 +130,7 @@ public class DataUpdater extends AsyncTask<String, Void, List<Channel>> {
         if (result.isEmpty()) {
             Toast.makeText(mContext, "Feed already in base or not found", Toast.LENGTH_LONG).show();
         }
+        //используя handler, возвращаем фид в UI, чтобы добавить кнопку
         if (!result.isEmpty()&&(result.size()==1)){
             Message msg = mHandler.obtainMessage(0, result.get(0));
             mHandler.sendMessage(msg);

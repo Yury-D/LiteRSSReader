@@ -1,9 +1,9 @@
 package testproject.ambal.literssreader;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
@@ -14,10 +14,9 @@ import java.sql.SQLException;
 import testproject.ambal.literssreader.ORM.HelperFactory;
 import testproject.ambal.literssreader.ORM.entities.Channel;
 
-public class DetailFeedActivity extends SherlockFragmentActivity implements ItemFragment.OnFragmentInteractionListener {
-    Intent mIntent;
-    SherlockFragment myFragment;
-    android.support.v4.app.FragmentTransaction mFragmentTransaction;
+public class DetailFeedActivity extends SherlockFragmentActivity implements ItemFragment.OnFragmentInteractionListener, SelectedItemFragment.OnFragmentInteractionListener {
+    private static final String LOG_TAG = "mylogs";
+    private static final String FRAG1 = "frag1";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,20 +26,23 @@ public class DetailFeedActivity extends SherlockFragmentActivity implements Item
         Channel mChannel = null;
         try {
             mChannel = HelperFactory.getHelper().getChannelDao().queryForId(channelId);
-            Log.d("mylog", mChannel.toString());
             ActionBar actionBar = getSupportActionBar();
             actionBar.setTitle(mChannel.getTitle());
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        myFragment = ItemFragment.newInstance(mChannel);
-        mFragmentTransaction = getSupportFragmentManager().beginTransaction();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction mFragmentTransaction = manager.beginTransaction();
+        SherlockFragment myFragment = ItemFragment.newInstance(mChannel);
         mFragmentTransaction.add(R.id.frgm, myFragment);
+        //если раскоментировать, то после нажатия back на 2м фрагменте, видим пустую activity
+        //mFragmentTransaction.addToBackStack(FRAG1);
         mFragmentTransaction.commit();
     }
 
     @Override
     public void onFragmentInteraction(String id) {
-
+        Log.e(LOG_TAG, "onFragmentInteraction");
     }
+
 }

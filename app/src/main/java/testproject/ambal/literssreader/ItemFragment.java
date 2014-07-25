@@ -1,9 +1,10 @@
 package testproject.ambal.literssreader;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,25 +24,20 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
 import testproject.ambal.literssreader.ORM.entities.Channel;
 import testproject.ambal.literssreader.ORM.entities.Item;
-import testproject.ambal.literssreader.dummy.DummyContent;
 import testproject.ambal.literssreader.service.DataUpdater;
 
 public class ItemFragment extends SherlockFragment implements AbsListView.OnItemClickListener {
-    //private static final String ARG_PARAM1 = "param1";
+    private static final String FRAG2 = "frag2";
     static DisplayImageOptions options;
     private static List<String> iconUrls;
 
@@ -51,10 +47,15 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
     private static Channel currentChannel;
     private static List<Item> sItems;
 
+
+    private SherlockFragment myFragment;
+    private FragmentTransaction mFragmentTransaction;
+    private FragmentManager manager;
+
+
+
     public static ItemFragment newInstance(Channel channel) {
         ItemFragment fragment = new ItemFragment();
-        //Bundle args = new Bundle();
-        //ArrayList<String> titles = new ArrayList<String>(channel.getItems().size());
         currentChannel = channel;
         sItems = new ArrayList<Item>(channel.getItems());
         iconUrls = new ArrayList<String>(channel.getItems().size());
@@ -67,16 +68,7 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
                 .showImageOnFail(R.drawable.ic_error)
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
-                //.considerExifParams(true)
-                //.displayer(new RoundedBitmapDisplayer(20))
                 .build();
-
-        /*for (Item mItem : sItems) {
-            titles.add(mItem.getTitle());
-        }
-        args.putStringArrayList(ARG_PARAM1, titles);
-        fragment.setArguments(args);
-        */
         return fragment;
     }
 
@@ -88,31 +80,27 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         mAdapter = new CustomAdapter((ArrayList<Item>) sItems);
-        /*
-        ArrayList<String> titles = new ArrayList<String>();
-        if (getArguments() != null) {
-            titles = getArguments().getStringArrayList(ARG_PARAM1);
-        }
-        mAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, titles) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-                text1.setTextColor(Color.parseColor("black"));
-                return view;
-            }*/
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_item, container, false);
-
+        View view = inflater.inflate(R.layout.fragment_item_list, container, false);
         // Set the adapter
         mListView = (AbsListView) view.findViewById(android.R.id.list);
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
@@ -127,8 +115,10 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.start_screen_menu, menu);
+        if (menu.size()==0) {
+            super.onCreateOptionsMenu(menu, inflater);
+            inflater.inflate(R.menu.start_screen_menu, menu);
+        }
     }
 
     @Override
@@ -154,17 +144,6 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
@@ -176,7 +155,14 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
+            //mListener.onFragmentInteraction(position);
+            manager = getActivity().getSupportFragmentManager();
+            mFragmentTransaction = manager.beginTransaction();
+            Item selectedItem = new ArrayList<Item>(currentChannel.getItems()).get(position);
+            myFragment = SelectedItemFragment.newInstance(selectedItem);
+            mFragmentTransaction.replace(R.id.frgm, myFragment);
+            mFragmentTransaction.addToBackStack(FRAG2);
+            mFragmentTransaction.commit();
         }
     }
 
@@ -265,32 +251,5 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
             return convertView;
         }
     }
-
-
-
-    private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
-
-        static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
-
-        @Override
-        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-            if (loadedImage != null) {
-                ImageView imageView = (ImageView) view;
-                boolean firstDisplay = !displayedImages.contains(imageUri);
-                if (firstDisplay) {
-                    FadeInBitmapDisplayer.animate(imageView, 500);
-                    displayedImages.add(imageUri);
-                }
-            }
-        }
-    }
-
-
-
-
-
-
-
-
 
 }
