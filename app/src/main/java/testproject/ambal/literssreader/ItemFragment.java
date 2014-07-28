@@ -130,7 +130,7 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
                 }
                 return true;
             case R.id.menuItem_update:
-                DataUpdater mDataUpdater = new DataUpdater(getSherlockActivity(), new Handler());
+                DataUpdater mDataUpdater = new DataUpdater(getSherlockActivity(), new Handler(), true);
                 mDataUpdater.execute(currentChannel.getUrl());
                 return true;
             case R.id.menuItem_settings: {

@@ -1,5 +1,7 @@
 package testproject.ambal.literssreader.service;
 
+import android.util.Log;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -16,6 +18,7 @@ import java.io.InputStreamReader;
  * Created by Ambal on 18.07.14.
  */
 public class Downloader {
+    private static final String LOG_TAG = "mylogs";
     private String targetUrl;
 
     public Downloader(String url) {
@@ -27,13 +30,14 @@ public class Downloader {
         HttpClient httpClient = new DefaultHttpClient();
         HttpGet httpGet = new HttpGet(targetUrl);
         InputStream inputStream = null;
+        BufferedReader reader = null;
         try {
             HttpResponse response = httpClient.execute(httpGet);
             StatusLine statusLine = response.getStatusLine();
             if (statusLine.getStatusCode() == 200) {
                 HttpEntity entity = response.getEntity();
                 inputStream = entity.getContent();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                reader = new BufferedReader(new InputStreamReader(inputStream));
                 String line;
                 while ((line = reader.readLine()) != null) {
                     stringBuilder.append(line);
@@ -44,9 +48,11 @@ public class Downloader {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            Log.e(LOG_TAG, String.valueOf(e.getCause()));
         } finally {
             if (inputStream != null) {
                 try {
+                    reader.close();
                     inputStream.close();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -55,6 +61,5 @@ public class Downloader {
         }
         return null;
     }
-
 
 }

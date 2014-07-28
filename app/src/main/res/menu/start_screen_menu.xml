@@ -3,16 +3,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".StartScreenActivity" >
     <item
-        android:id="@+id/menuItem_update"
-        android:title="@string/fetch"
-        android:orderInCategory="200"
-        android:showAsAction="ifRoom"
-        android:icon="@drawable/view_refresh"/>
-    <item
         android:id="@+id/menuItem_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
         android:showAsAction="ifRoom"
         android:icon="@drawable/ic_launcher_settings"
       />
+    <item
+        android:id="@+id/menuItem_addFeed"
+        android:title="@string/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:icon="@drawable/ic_add"
+      />
+    <item
+        android:id="@+id/menuItem_update"
+        android:title="@string/fetch"
+        android:orderInCategory="200"
+        android:showAsAction="always"
+        android:icon="@drawable/view_refresh"/>
 </menu>

@@ -6,14 +6,13 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 
 import testproject.ambal.literssreader.ORM.HelperFactory;
 import testproject.ambal.literssreader.ORM.entities.Channel;
@@ -24,32 +23,40 @@ import testproject.ambal.literssreader.R;
  * Created by Ambal on 18.07.14.
  */
 
-public class DataUpdater extends AsyncTask<String, Void, List<Channel>> {
+public class DataUpdater extends AsyncTask<String, Void, Map<String, Integer>> {
     private Context mContext;
     private Handler mHandler;
     private ProgressDialog dialog;
     private Downloader mDownloader;
+    private Map<String, Integer> resultStatus;
+    private int createCounter = 0;
+    private int updateCounter = 0;
     private static final String LOG_TAG = "mylogs";
 
     //данный конструктор нужен чтобы передать контекст в AsyncTask
-    public DataUpdater(Context context, Handler handler) {
+    public DataUpdater(Context context, Handler handler, boolean showProgressDialog) {
         mContext = context;
         mHandler = handler;
-        dialog = new ProgressDialog(mContext);
+        if (showProgressDialog){
+            dialog = new ProgressDialog(mContext);
+        }
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        this.dialog.setMessage(mContext.getString(R.string.progress_dialog_message));
-        this.dialog.setIndeterminate(true);
-        this.dialog.setCancelable(true);
-        this.dialog.show();
+        if (null!=dialog){
+            dialog.setMessage(mContext.getString(R.string.progress_dialog_message));
+            dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            dialog.setIndeterminate(true);
+            dialog.setCancelable(true);
+            dialog.show();
+        }
     }
 
     @Override
-    protected List<Channel> doInBackground(String... urls) {
-        List<Channel> result = new ArrayList<Channel>();
+    protected Map<String, Integer> doInBackground(String... urls) {
+        resultStatus = new HashMap<String, Integer>(2);
         for (String url : urls) {
             mDownloader = new Downloader(url);
             Parser parser = new Parser();
@@ -89,6 +96,7 @@ public class DataUpdater extends AsyncTask<String, Void, List<Channel>> {
                         //предварительно удалив старый фид с таким же заголовком и все его айтемы
                         int oldId = 0;
                         if (sameChanelDetected) {
+                            updateCounter++;
                             oldId = HelperFactory.getHelper().getChannelDao().extractId(sameChannels.get(0));
                             List<Item> itemsForDelete = HelperFactory.getHelper().getItemDao().queryForEq("channel_id",
                                     sameChannels.get(0).getId());
@@ -98,7 +106,7 @@ public class DataUpdater extends AsyncTask<String, Void, List<Channel>> {
                         //чтобы id не менялись при апдейте, сохраняем старый и здесь применяем его к новому
                         downloadedChannel.setId(oldId);
                         HelperFactory.getHelper().getChannelDao().create(downloadedChannel);
-
+                        createCounter++;
                         //HelperFactory.getHelper().getChannelDao().updateId(downloadedChannel, oldId);
                     } catch (SQLException e) {
                         e.printStackTrace();
@@ -113,30 +121,23 @@ public class DataUpdater extends AsyncTask<String, Void, List<Channel>> {
                         }
                     }
                 }
-                if (!sameChanelDetected){
-                    // если фид был добавлен впервые, вернем его в UI, чтобы нарисовать кнопку для него
-                    result.add(downloadedChannel);
-                    Log.e(LOG_TAG, "added first time");
-                }
-
             }
         }
-        return result;
+        resultStatus.put("created", createCounter);
+        resultStatus.put("updated", updateCounter);
+        return resultStatus;
     }
 
     @Override
-    protected void onPostExecute(List<Channel> result) {
-        super.onPostExecute(result);
-        if (result.isEmpty()) {
-            Toast.makeText(mContext, "Feed already in base or not found", Toast.LENGTH_LONG).show();
-        }
-        //используя handler, возвращаем фид в UI, чтобы добавить кнопку
-        if (!result.isEmpty()&&(result.size()==1)){
-            Message msg = mHandler.obtainMessage(0, result.get(0));
-            mHandler.sendMessage(msg);
-        }
-        if (this.dialog.isShowing()) {
-            this.dialog.dismiss();
+    protected void onPostExecute(Map<String, Integer> resultStatus) {
+        super.onPostExecute(resultStatus);
+
+        Message msg = mHandler.obtainMessage(0, resultStatus);
+        mHandler.sendMessage(msg);
+        if (null!=dialog){
+            if (this.dialog.isShowing()) {
+                this.dialog.dismiss();
+            }
         }
     }
 }

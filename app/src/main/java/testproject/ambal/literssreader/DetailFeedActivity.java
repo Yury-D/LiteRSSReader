@@ -22,7 +22,7 @@ public class DetailFeedActivity extends SherlockFragmentActivity implements Item
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         int channelId = getIntent().getIntExtra("ChannelId",0);
-        setContentView(R.layout.detail_feed);
+        setContentView(R.layout.activity_detail_feed);
         Channel mChannel = null;
         try {
             mChannel = HelperFactory.getHelper().getChannelDao().queryForId(channelId);
@@ -33,11 +33,18 @@ public class DetailFeedActivity extends SherlockFragmentActivity implements Item
         }
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction mFragmentTransaction = manager.beginTransaction();
-        SherlockFragment myFragment = ItemFragment.newInstance(mChannel);
-        mFragmentTransaction.add(R.id.frgm, myFragment);
+        SherlockFragment myFragment = (SherlockFragment) manager.findFragmentById(R.id.frgm);
+        if (null == myFragment) {
+            myFragment = ItemFragment.newInstance(mChannel);
+            mFragmentTransaction.add(R.id.frgm, myFragment);
+            mFragmentTransaction.commit();
+        }
+        mFragmentTransaction.show(myFragment);
+
+
+
         //если раскоментировать, то после нажатия back на 2м фрагменте, видим пустую activity
         //mFragmentTransaction.addToBackStack(FRAG1);
-        mFragmentTransaction.commit();
     }
 
     @Override
