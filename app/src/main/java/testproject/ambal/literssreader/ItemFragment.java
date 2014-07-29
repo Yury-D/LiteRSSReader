@@ -237,7 +237,7 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
             holder.tvTitle.setText(items.get(position).getTitle());
 
             //приводим дату в нормальный формат гггг-мм-дд чч:cc - пример 2000-04-01 00:00
-            SimpleDateFormat defFormat = new SimpleDateFormat("EEE, mm MMM yyyy HH:mm:ss Z", Locale.US);
+            SimpleDateFormat defFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US);
             Date formattedDate = new Date();
             try {
                 formattedDate = defFormat.parse(items.get(position).getPubDate());
