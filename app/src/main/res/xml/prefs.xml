@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceScreen
+        android:key="screen"
+        android:summary="Choose channels presets"
+        android:title="Presets">
+        <PreferenceCategory
+            android:key="categ1"
+            android:summary="Description of category 1"
+            android:title="@string/onliner.by">
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="http://tech.onliner.by/feed"
+                android:summary="Технологии onliner.by"
+                android:title="Технологии"/>
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="http://auto.onliner.by/feed"
+                android:summary="Авто onliner.by"
+                android:title="Авто"/>
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="http://people.onliner.by/feed"
+                android:summary="Люди onliner.by"
+                android:title="Люди"/>
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="http://realt.onliner.by/feed"
+                android:summary="Недвижимость onliner.by"
+                android:title="Недвижимость"/>
+        </PreferenceCategory>
+        <PreferenceCategory
+            android:key="categ2"
+            android:summary="Description of category 2"
+            android:title="@string/tut.by">
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="http://news.tut.by/rss/all.rss"
+                android:summary="Новости tut.by"
+                android:title="Последние новости по всем рубрикам"/>
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="http://news.tut.by/rss/index.rss"
+                android:summary="Новости tut.by"
+                android:title="Главные новости недели"/>
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="http://news.tut.by/rss/politics.rss"
+                android:summary="Новости tut.by"
+                android:title="Политика"/>
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="http://news.tut.by/rss/economics.rss"
+                android:summary="Новости tut.by"
+                android:title="Экономика и бизнес"/>
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="http://news.tut.by/rss/finance.rss"
+                android:summary="Новости tut.by"
+                android:title="Финансы"/>
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="http://news.tut.by/rss/society.rss"
+                android:summary="Новости tut.by"
+                android:title="Общество"/>
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="http://news.tut.by/rss/sport.rss"
+                android:summary="Новости tut.by"
+                android:title="Спорт"/>
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="http://news.tut.by/rss/it.rss"
+                android:summary="Новости tut.by"
+                android:title="Наука и технологии"/>
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="http://news.tut.by/rss/auto/all.rss"
+                android:summary="Новости tut.by"
+                android:title="Последние новости по рубрике авто"/>
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="http://news.tut.by/rss/it/all.rss"
+                android:summary="Новости tut.by"
+                android:title="Последние новости по рубрике IT"/>
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="http://news.tut.by/rss/sport/all.rss"
+                android:summary="Новости tut.by"
+                android:title="Последние новости по рубрике спорт"/>
+        </PreferenceCategory>
+    </PreferenceScreen>
+</PreferenceScreen>
