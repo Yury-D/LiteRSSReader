@@ -22,7 +22,6 @@ import testproject.ambal.literssreader.service.DataUpdater;
 public class AddActivity extends SherlockActivity{
 
     private EditText mText;
-    private String newFeed;
     private Handler mHandler;
 
 
@@ -32,14 +31,15 @@ public class AddActivity extends SherlockActivity{
         setContentView(R.layout.activity_add_feed);
         mText = (EditText) findViewById(R.id.editText);
 
-
         mHandler = new Handler() {
+
             @Override
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case 0:
                         final Map<String, Integer> result = (Map<String, Integer>) msg.obj;
                         String mapToString = result.toString();
+                        //показываем сколько скачалось и сколько обновилось
                         Toast.makeText(getBaseContext(),  mapToString
                                 .substring(1, mapToString.length() - 1), Toast.LENGTH_SHORT).show();
                         // если все 0, проверить инет
@@ -76,8 +76,7 @@ public class AddActivity extends SherlockActivity{
 
     //"add Feed" button listener
     public void addFeed(View v) {
-        newFeed = mText.getText().toString();
-        //saveLastInput();
+        String newFeed = mText.getText().toString();
 
         if (!Patterns.WEB_URL.matcher(newFeed).matches()) {
             Toast.makeText(this, "Incorrect input URL", Toast.LENGTH_SHORT).show();

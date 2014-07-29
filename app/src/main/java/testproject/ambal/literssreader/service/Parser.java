@@ -1,7 +1,5 @@
 package testproject.ambal.literssreader.service;
 
-import android.util.Log;
-
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -23,7 +21,7 @@ public class Parser {
     private static final String TAG_CHANNEL = "channel";
     private static final String TAG_TITLE = "title";
     private static final String TAG_LINK = "link";
-    private static final String TAG_DESRIPTION = "description";
+    private static final String TAG_DESCRIPTION = "description";
     private static final String TAG_LANGUAGE = "language";
     private static final String TAG_ITEM = "item";
     private static final String TAG_PUB_DATE = "pubDate";
@@ -32,13 +30,12 @@ public class Parser {
     private static final String TAG_CATEGORY = "category";
     private static final String TAG_AUTHOR = "name";
     private static final String TAG_CREATOR = "creator";
-    private static final String TAG_IMG = "img";
     private static final String TAG_THUMBNAIL = "thumbnail";
 
     private static final String LOG_TAG = "mylogs";
 
 
-    List<Item> items;
+    private List<Item> items;
     private Item item;
     private String text;
     private Channel channel;
@@ -55,7 +52,6 @@ public class Parser {
             factory.setNamespaceAware(true);
 
             // parse channel
-
             myParser = factory.newPullParser();
             // !!! Корявое преобразование строки в поток
             myParser.setInput(new ByteArrayInputStream(target.getBytes()), null);
@@ -87,7 +83,7 @@ public class Parser {
                             channel.setTitle(text);
                         } else if (tagname.equalsIgnoreCase(TAG_LINK)) {
                             channel.setLink(text);
-                        } else if (tagname.equalsIgnoreCase(TAG_DESRIPTION)) {
+                        } else if (tagname.equalsIgnoreCase(TAG_DESCRIPTION)) {
                             channel.setDescription(text);
                         } else if (tagname.equalsIgnoreCase(TAG_LANGUAGE)) {
                             channel.setLanguage(text);
@@ -147,7 +143,7 @@ public class Parser {
                                 item.setTitle(text.replace("&nbsp", ""));
                             } else if (tagname.equalsIgnoreCase(TAG_LINK)) {
                                 item.setLink(text);
-                            } else if (tagname.equalsIgnoreCase(TAG_DESRIPTION)) {
+                            } else if (tagname.equalsIgnoreCase(TAG_DESCRIPTION)) {
                                 item.setDescription(text);
                             } else if (tagname.equalsIgnoreCase(TAG_AUTHOR) || tagname.equalsIgnoreCase(TAG_CREATOR)) {
                                 item.setAuthor(text);

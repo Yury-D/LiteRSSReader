@@ -58,14 +58,12 @@ public class DataUpdater extends AsyncTask<String, Void, Map<String, Integer>> {
     protected Map<String, Integer> doInBackground(String... urls) {
         resultStatus = new HashMap<String, Integer>(2);
         for (String url : urls) {
-            mDownloader = new Downloader(url);
             Parser parser = new Parser();
-
-            String stringDownloadedChannel = mDownloader.download();
+            String stringDownloadedChannel = mDownloader.download(url);
 
             //если что нибудь скачалось, пытаемся парсить
             save:
-            if (null != stringDownloadedChannel) {
+            if (stringDownloadedChannel.length()!=0) {
                 Channel downloadedChannel = null;
                 try {
                     downloadedChannel = parser.parse(stringDownloadedChannel);

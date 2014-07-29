@@ -19,16 +19,11 @@ import java.io.InputStreamReader;
  */
 public class Downloader {
     private static final String LOG_TAG = "mylogs";
-    private String targetUrl;
 
-    public Downloader(String url) {
-        targetUrl = url;
-    }
-
-    String download() {
+    String download(String url) {
         StringBuilder stringBuilder = new StringBuilder();
         HttpClient httpClient = new DefaultHttpClient();
-        HttpGet httpGet = new HttpGet(targetUrl);
+        HttpGet httpGet = new HttpGet(url);
         InputStream inputStream = null;
         BufferedReader reader = null;
         try {
@@ -44,7 +39,7 @@ public class Downloader {
                 }
                 return stringBuilder.toString();
             } else {
-                return null;
+                return "";
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -59,7 +54,7 @@ public class Downloader {
                 }
             }
         }
-        return null;
+        return "";
     }
 
 }

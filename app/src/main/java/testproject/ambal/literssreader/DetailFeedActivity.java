@@ -16,13 +16,13 @@ import testproject.ambal.literssreader.ORM.entities.Channel;
 
 public class DetailFeedActivity extends SherlockFragmentActivity implements ItemFragment.OnFragmentInteractionListener, SelectedItemFragment.OnFragmentInteractionListener {
     private static final String LOG_TAG = "mylogs";
-    private static final String FRAG1 = "frag1";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         int channelId = getIntent().getIntExtra("ChannelId",0);
         setContentView(R.layout.activity_detail_feed);
+
         Channel mChannel = null;
         try {
             mChannel = HelperFactory.getHelper().getChannelDao().queryForId(channelId);
@@ -41,10 +41,6 @@ public class DetailFeedActivity extends SherlockFragmentActivity implements Item
         }
         mFragmentTransaction.show(myFragment);
 
-
-
-        //если раскоментировать, то после нажатия back на 2м фрагменте, видим пустую activity
-        //mFragmentTransaction.addToBackStack(FRAG1);
     }
 
     @Override

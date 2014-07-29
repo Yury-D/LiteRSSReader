@@ -67,7 +67,6 @@ public class PrefActivity extends SherlockPreferenceActivity implements SharedPr
 
         if (sharedPreferences.getBoolean(s,false)){
             if (!currentChannelsUrlsList.contains(s)){
-                //надо как то или скачать канал или организовать очередь на скачку
                 DataUpdater updater = new DataUpdater(getBaseContext(), new Handler(), false);
                 updater.execute(s);
                 Log.e(LOG_TAG, "added");

@@ -38,7 +38,6 @@ import testproject.ambal.literssreader.service.DataUpdater;
 public class StartScreenActivity extends SherlockActivity {
     private List<Channel> myChannels;
 
-    //private final String SAVED_TEXT = "saved_text";
     private static final String LOG_TAG = "mylogs";
     private Handler mHandler;
     private LinearLayout buttonlayout;
@@ -141,19 +140,6 @@ public class StartScreenActivity extends SherlockActivity {
         return true;
     }
 
-    //для удобства сохраняем последний введенный URL
-/*    void saveLastInput() {
-        sPref = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor ed = sPref.edit();
-        ed.putString(SAVED_TEXT, newFeed);
-        ed.commit();
-    }
-
-    void loadLastInput() {
-        sPref = getPreferences(MODE_PRIVATE);
-        String savedText = sPref.getString(SAVED_TEXT, getString(R.string.defaultUrl));
-        mText.setText(savedText);
-    }*/
 
     @Override
     public void onResume() {
