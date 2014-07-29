@@ -63,7 +63,7 @@ public class DataUpdater extends AsyncTask<String, Void, Map<String, Integer>> {
 
             String stringDownloadedChannel = mDownloader.download();
 
-            //если что нибудь скачалось, пытаемся парсить, иначе вернем пустой List
+            //если что нибудь скачалось, пытаемся парсить
             save:
             if (null != stringDownloadedChannel) {
                 Channel downloadedChannel = null;
@@ -71,7 +71,7 @@ public class DataUpdater extends AsyncTask<String, Void, Map<String, Integer>> {
                     downloadedChannel = parser.parse(stringDownloadedChannel);
                 } catch (NullPointerException e) {
                     e.printStackTrace();
-                    Log.e(LOG_TAG, "incorrect downloaded data, not rss link?");
+                    Log.e(LOG_TAG, mContext.getString(R.string.error_message));
                     break save;
                 }
                 downloadedChannel.setUrl(url);
@@ -97,17 +97,19 @@ public class DataUpdater extends AsyncTask<String, Void, Map<String, Integer>> {
                         int oldId = 0;
                         if (sameChanelDetected) {
                             updateCounter++;
+
                             oldId = HelperFactory.getHelper().getChannelDao().extractId(sameChannels.get(0));
                             List<Item> itemsForDelete = HelperFactory.getHelper().getItemDao().queryForEq("channel_id",
                                     sameChannels.get(0).getId());
                             HelperFactory.getHelper().getItemDao().delete(itemsForDelete);
                             HelperFactory.getHelper().getChannelDao().deleteById(sameChannels.get(0).getId());
                         }
+
                         //чтобы id не менялись при апдейте, сохраняем старый и здесь применяем его к новому
                         downloadedChannel.setId(oldId);
                         HelperFactory.getHelper().getChannelDao().create(downloadedChannel);
                         createCounter++;
-                        //HelperFactory.getHelper().getChannelDao().updateId(downloadedChannel, oldId);
+
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
