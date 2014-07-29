@@ -92,7 +92,7 @@ public class StartScreenActivity extends SherlockActivity {
                 .diskCacheFileNameGenerator(new Md5FileNameGenerator())
                 .diskCacheSize(5 * 1024 * 1024) // 50 Mb
                 .tasksProcessingOrder(QueueProcessingType.LIFO)
-                .writeDebugLogs() //TODO Remove for release app
+                //.writeDebugLogs() //TODO Remove for release app
                 .build();
         // Initialize ImageLoader with configuration.
         ImageLoader.getInstance().init(config);

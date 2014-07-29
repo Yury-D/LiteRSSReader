@@ -27,7 +27,6 @@ public class DataUpdater extends AsyncTask<String, Void, Map<String, Integer>> {
     private Context mContext;
     private Handler mHandler;
     private ProgressDialog dialog;
-    private Downloader mDownloader;
     private Map<String, Integer> resultStatus;
     private int createCounter = 0;
     private int updateCounter = 0;
@@ -58,6 +57,7 @@ public class DataUpdater extends AsyncTask<String, Void, Map<String, Integer>> {
     protected Map<String, Integer> doInBackground(String... urls) {
         resultStatus = new HashMap<String, Integer>(2);
         for (String url : urls) {
+            Downloader mDownloader = new Downloader();
             Parser parser = new Parser();
             String stringDownloadedChannel = mDownloader.download(url);
 
