@@ -104,7 +104,7 @@ public class DataUpdater extends AsyncTask<String, Integer, Map<String, Integer>
                         int oldId = 0;
                         if (sameChanelDetected) {
                             updateCounter++;
-
+                            createCounter--;
                             oldId = HelperFactory.getHelper().getChannelDao().extractId(sameChannels.get(0));
                             List<Item> itemsForDelete = HelperFactory.getHelper().getItemDao().queryForEq("channel_id",
                                     sameChannels.get(0).getId());
@@ -132,8 +132,8 @@ public class DataUpdater extends AsyncTask<String, Integer, Map<String, Integer>
                 }
             }
         }
-        resultStatus.put("created", createCounter);
-        resultStatus.put("updated", updateCounter);
+        resultStatus.put(mContext.getString(R.string.created), createCounter);
+        resultStatus.put(mContext.getString(R.string.updated), updateCounter);
         return resultStatus;
     }
 
