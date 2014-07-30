@@ -4,7 +4,7 @@
     <string name="app_name">LiteRSSReader</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="fetch">Fetch</string>
+    <string name="fetch">Update</string>
     <string name="tut.by">tut.by</string>
     <string name="onliner.by">onliner.by</string>
     <string name="download_error_message">Download error</string>
@@ -16,5 +16,8 @@
     <string name="updated_channels">updated channels - </string>
     <string name="check_conn">Check the connection!</string>
     <string name="error_message">incorrect downloaded data, not rss link?</string>
+    <string name="created">created</string>
+    <string name="updated">updated</string>
+    <string name="action_add">Add</string>
 
 </resources>

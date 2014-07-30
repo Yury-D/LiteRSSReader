@@ -6,20 +6,20 @@
         android:id="@+id/menuItem_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
-        android:showAsAction="ifRoom"
+        android:showAsAction="ifRoom|withText"
         android:icon="@drawable/ic_launcher_settings"
       />
     <item
         android:id="@+id/menuItem_addFeed"
-        android:title="@string/action_settings"
+        android:title="@string/action_add"
         android:orderInCategory="100"
-        android:showAsAction="always"
+        android:showAsAction="ifRoom|withText"
         android:icon="@drawable/ic_add"
       />
     <item
         android:id="@+id/menuItem_update"
         android:title="@string/fetch"
         android:orderInCategory="200"
-        android:showAsAction="always"
+        android:showAsAction="ifRoom|withText"
         android:icon="@drawable/view_refresh"/>
 </menu>
