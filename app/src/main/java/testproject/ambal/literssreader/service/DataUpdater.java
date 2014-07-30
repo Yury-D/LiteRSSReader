@@ -23,7 +23,7 @@ import testproject.ambal.literssreader.R;
  * Created by Ambal on 18.07.14.
  */
 
-public class DataUpdater extends AsyncTask<String, Void, Map<String, Integer>> {
+public class DataUpdater extends AsyncTask<String, Integer, Map<String, Integer>> {
     private Context mContext;
     private Handler mHandler;
     private ProgressDialog dialog;
@@ -44,26 +44,35 @@ public class DataUpdater extends AsyncTask<String, Void, Map<String, Integer>> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if (null!=dialog){
+        if (dialog!=null){
             dialog.setMessage(mContext.getString(R.string.progress_dialog_message));
             dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            dialog.setIndeterminate(true);
+            //dialog.setIndeterminate(true);
             dialog.setCancelable(true);
             dialog.show();
         }
     }
 
     @Override
+    protected void onProgressUpdate(Integer... values) {
+        if (dialog!=null){
+            dialog.setProgress(values[0]);
+        }
+    }
+
+    @Override
     protected Map<String, Integer> doInBackground(String... urls) {
         resultStatus = new HashMap<String, Integer>(2);
-        for (String url : urls) {
+        for (int i = 0; i < urls.length; i++) {
+            publishProgress(((i*100)/urls.length));
+            String url = urls[i];
             Downloader mDownloader = new Downloader();
             Parser parser = new Parser();
             String stringDownloadedChannel = mDownloader.download(url);
 
             //если что нибудь скачалось, пытаемся парсить
             save:
-            if (stringDownloadedChannel.length()!=0) {
+            if (stringDownloadedChannel.length() != 0) {
                 Channel downloadedChannel = null;
                 try {
                     downloadedChannel = parser.parse(stringDownloadedChannel);
