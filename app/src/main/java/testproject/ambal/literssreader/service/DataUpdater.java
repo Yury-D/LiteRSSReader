@@ -70,6 +70,7 @@ public class DataUpdater extends AsyncTask<String, Integer, Map<String, Integer>
             Parser parser = new Parser();
             String stringDownloadedChannel = mDownloader.download(url);
 
+
             //проверяем, что скачалось хоть что-то
             if (stringDownloadedChannel != null && (stringDownloadedChannel.length() != 0)) {
                 Channel downloadedChannel = parser.parse(stringDownloadedChannel);
