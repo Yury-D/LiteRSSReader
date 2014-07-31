@@ -44,7 +44,7 @@ public class Parser {
         items = new ArrayList<Item>();
     }
 
-    public Channel parse(String target) throws NullPointerException {
+    public Channel parse(String target) {
         XmlPullParserFactory factory = null;
         XmlPullParser myParser = null;
         try {
