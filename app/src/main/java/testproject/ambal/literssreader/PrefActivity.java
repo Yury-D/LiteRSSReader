@@ -19,6 +19,7 @@ import java.util.List;
 
 import testproject.ambal.literssreader.ORM.HelperFactory;
 import testproject.ambal.literssreader.ORM.entities.Channel;
+import testproject.ambal.literssreader.ORM.entities.Item;
 import testproject.ambal.literssreader.service.DataUpdater;
 
 
@@ -77,6 +78,13 @@ public class PrefActivity extends SherlockPreferenceActivity implements SharedPr
                 List<Channel> channelsForRemove;
                 try {
                     channelsForRemove = HelperFactory.getHelper().getChannelDao().queryForEq("url", s);
+                    //удаляем item-ы
+                    for (Channel channel: channelsForRemove){
+                        List<Item> itemsForDelete = HelperFactory.getHelper().getItemDao().queryForEq("channel_id",
+                                channel.getId());
+                        HelperFactory.getHelper().getItemDao().delete(itemsForDelete);
+                    }
+                    // и сам канал
                     HelperFactory.getHelper().getChannelDao().delete(channelsForRemove);
                     Log.e(LOG_TAG, "deleted");
                 } catch (SQLException e) {
