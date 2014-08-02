@@ -13,6 +13,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Ambal on 18.07.14.
@@ -20,7 +22,16 @@ import java.io.InputStreamReader;
 public class Downloader {
     private static final String LOG_TAG = "mylogs";
 
-    String download(String url) {
+    public static final String CREATED = "created";
+    public static final String UPDATED = "updated";
+    public static final String STATUS_CODE = "status";
+    public static final String STATUS_SUCCESS = "OK";
+    public static final String STATUS_MSG = "msg";
+    public static final String RESULT = "result";
+
+    Map<String, String> download(String url) {
+
+        Map<String, String> resultMap = new HashMap<String, String>(5);
         StringBuilder stringBuilder = new StringBuilder();
         HttpClient httpClient = new DefaultHttpClient();
         HttpGet httpGet = new HttpGet(url);
@@ -29,6 +40,8 @@ public class Downloader {
         try {
             HttpResponse response = httpClient.execute(httpGet);
             StatusLine statusLine = response.getStatusLine();
+            resultMap.put(STATUS_CODE, String.valueOf(statusLine.getStatusCode()));
+            resultMap.put(STATUS_MSG, statusLine.getReasonPhrase());
             if (statusLine.getStatusCode() == 200) {
                 HttpEntity entity = response.getEntity();
                 inputStream = entity.getContent();
@@ -37,13 +50,13 @@ public class Downloader {
                 while ((line = reader.readLine()) != null) {
                     stringBuilder.append(line);
                 }
-                return stringBuilder.toString();
-            } else {
-                return "";
+                resultMap.put(RESULT, stringBuilder.toString());
+                return resultMap;
             }
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e(LOG_TAG, String.valueOf(e.getCause()));
+            resultMap.put(STATUS_MSG, e.getMessage());
+            //Log.e(LOG_TAG, String.valueOf(e.getMessage()));
         } finally {
             if (inputStream != null) {
                 try {
@@ -51,7 +64,8 @@ public class Downloader {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            } if (reader != null) {
+            }
+            if (reader != null) {
                 try {
                     reader.close();
                 } catch (IOException e) {
@@ -59,7 +73,7 @@ public class Downloader {
                 }
             }
         }
-        return "";
+        return resultMap;
     }
 
 }

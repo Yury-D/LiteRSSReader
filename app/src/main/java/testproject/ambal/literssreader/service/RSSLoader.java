@@ -1,10 +1,9 @@
 package testproject.ambal.literssreader.service;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
+import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
 import java.sql.SQLException;
@@ -20,61 +19,45 @@ import testproject.ambal.literssreader.ORM.entities.Item;
 import testproject.ambal.literssreader.R;
 
 import static testproject.ambal.literssreader.service.Downloader.*;
+
 /**
- * Created by Ambal on 18.07.14.
+ * Created by Ambal on 30.07.14.
  */
+public class RSSLoader extends AsyncTaskLoader<Map<String, String>> {
 
-public class DataUpdater extends AsyncTask<String, Integer, Map<String, String>> {
-
-    private Context mContext;
-    private Handler mHandler;
-    private ProgressDialog dialog;
-    private int createCounter = 0;
-    private int updateCounter = 0;
+    Context mContext;
+    String[] urls;
     private static final String LOG_TAG = "mylogs";
 
-    //данный конструктор нужен чтобы передать контекст в AsyncTask
-    public DataUpdater(Context context, Handler handler, boolean showProgressDialog) {
+
+    public RSSLoader(Context context, Bundle args) {
+        super(context);
+        Log.e(LOG_TAG, hashCode() + " constructor RSSLoader");
         mContext = context;
-        mHandler = handler;
-        if (showProgressDialog){
-            dialog = new ProgressDialog(mContext);
+        if (args != null) {
+            urls = args.getStringArray("urlList");
+        } else {
+            Log.e(LOG_TAG, "no valid urls for loader");
         }
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        if (dialog!=null){
-            dialog.setMessage(mContext.getString(R.string.progress_dialog_message));
-            dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            //dialog.setIndeterminate(true);
-            dialog.setCancelable(true);
-            dialog.show();
-        }
-    }
+    public Map<String, String> loadInBackground() {
+        Log.e(LOG_TAG, hashCode() + " loadInBackground start");
 
-    @Override
-    protected void onProgressUpdate(Integer... values) {
-        if (dialog!=null){
-            dialog.setProgress(values[0]);
-        }
-    }
-
-    @Override
-    protected Map<String, String> doInBackground(String... urls) {
-        Map<String, String> resultStatus = new HashMap<String, String>(2);
-        Map<String, String> downloaded = new HashMap<String, String>();
-        for (int i = 0; i < urls.length; i++) {
-            publishProgress(((i*100)/urls.length));
-            String url = urls[i];
+        int createCounter = 0;
+        int updateCounter = 0;
+        Map<String, String> resultStatus = new HashMap<String, String>();
+        Map<String, String> downloadedMap = new HashMap<String, String>();
+        for (String url : urls) {
             Downloader mDownloader = new Downloader();
-            Parser parser = new Parser();
-            downloaded = mDownloader.download(url);
 
-            String stringDownloadedChannel = downloaded.get(RESULT);
+            downloadedMap = mDownloader.download(url);
+            String stringDownloadedChannel = downloadedMap.get(RESULT);
+
             //проверяем, что скачалось хоть что-то
             if (stringDownloadedChannel != null && (stringDownloadedChannel.length() != 0)) {
+                Parser parser = new Parser();
                 Channel downloadedChannel = parser.parse(stringDownloadedChannel);
                 // что это что-то удалось распарсить
                 if (downloadedChannel != null) {
@@ -128,31 +111,14 @@ public class DataUpdater extends AsyncTask<String, Integer, Map<String, String>>
                         }
                     }
                 }
+
             }
         }
-        resultStatus.putAll(downloaded);
+        resultStatus.putAll(downloadedMap);
+        downloadedMap = null;
+        //Log.e(LOG_TAG, downloadedMap.toString());
         resultStatus.put(CREATED, String.valueOf(createCounter));
         resultStatus.put(UPDATED, String.valueOf(updateCounter));
         return resultStatus;
     }
-
-    @Override
-    protected void onPostExecute(Map<String, String> resultStatus) {
-        super.onPostExecute(resultStatus);
-
-        Message msg = mHandler.obtainMessage(0, resultStatus);
-        mHandler.sendMessage(msg);
-        try {
-            if (null!=dialog) {
-                if (dialog.isShowing()) {
-                    dialog.dismiss();
-                }
-            }
-        } catch (IllegalArgumentException e){
-            e.printStackTrace();
-        }
-    }
 }
-
-
-

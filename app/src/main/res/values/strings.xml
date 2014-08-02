@@ -16,8 +16,8 @@
     <string name="updated_channels">updated channels - </string>
     <string name="check_conn">Check the connection!</string>
     <string name="error_message">incorrect downloaded data, not rss link?</string>
-    <string name="created">created</string>
-    <string name="updated">updated</string>
     <string name="action_add">Add</string>
+    <string name="error_msg">errors</string>
+    <string name="btn">btn</string>
 
 </resources>

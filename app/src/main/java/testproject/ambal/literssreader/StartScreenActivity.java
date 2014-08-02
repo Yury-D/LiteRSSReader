@@ -3,14 +3,17 @@ package testproject.ambal.literssreader;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
@@ -31,53 +34,30 @@ import java.util.Map;
 
 import testproject.ambal.literssreader.ORM.HelperFactory;
 import testproject.ambal.literssreader.ORM.entities.Channel;
-import testproject.ambal.literssreader.service.DataUpdater;
+import testproject.ambal.literssreader.service.RSSLoader;
+import static testproject.ambal.literssreader.service.Downloader.*;
 
+public class StartScreenActivity extends SherlockFragmentActivity implements LoaderManager.LoaderCallbacks<Map<String, String>> {
+    private static final int LOADER_ID = 1;
 
-
-public class StartScreenActivity extends SherlockActivity {
     private List<Channel> myChannels;
-
     private static final String LOG_TAG = "mylogs";
-    private Handler mHandler;
     private LinearLayout buttonlayout;
+
+    private ProgressBar progressBar;
+
+    Loader<Map<String, String>> loader = null;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         setContentView(R.layout.activity_start_screen);
         buttonlayout = (LinearLayout)findViewById(R.id.button_keeper);
 
-
-        mHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                switch (msg.what) {
-                    case 0:
-                        final Map<String, Integer> result = (Map<String, Integer>) msg.obj;
-                        String mapToString = result.toString();
-                        Toast.makeText(getBaseContext(),  mapToString
-                                .substring(1, mapToString.length() - 1), Toast.LENGTH_SHORT).show();
-                        // если все 0, проверить инет
-                        StringBuffer sb = new StringBuffer();
-                        for (Integer next : result.values()) {
-                            sb.append(next);
-                        }
-                        if (sb.toString().equals("00")){
-                            Toast.makeText(getBaseContext(), getString(R.string.check_conn), Toast.LENGTH_LONG).show();
-                        }
-                        break;
-                }
-            }
-        };
-
-        // loadLastInput();
-
-
         initImageLoader(getApplicationContext());
-
     }
 
 
@@ -111,7 +91,6 @@ public class StartScreenActivity extends SherlockActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        DataUpdater mDataUpdater = new DataUpdater(this, mHandler, true);
         ArrayList<String> currentChannelsUrlsList = new ArrayList<String>();
         for (Channel mChannel : myChannels) {
             currentChannelsUrlsList.add(mChannel.getUrl());
@@ -121,7 +100,11 @@ public class StartScreenActivity extends SherlockActivity {
 
         switch (item.getItemId()) {
             case R.id.menuItem_update: {
-                mDataUpdater.execute(urls);
+                Bundle bundle = new Bundle();
+                bundle.putStringArray("urlList", urls);
+                getSupportLoaderManager().initLoader(LOADER_ID, bundle, this);
+                loader = getSupportLoaderManager().getLoader(LOADER_ID);
+                loader.forceLoad();
                 break;
             }
             case R.id.menuItem_settings: {
@@ -147,18 +130,18 @@ public class StartScreenActivity extends SherlockActivity {
         checkForCrashes();
         checkForUpdates();
 
-
         //создаем кнопки каналов, кажд. раз при возврате на экран
         buttonlayout.removeAllViews();
         //читаем список имеющихся каналов
         HelperFactory.setHelper(getApplicationContext());
-        myChannels = Collections.EMPTY_LIST;
+        myChannels = Collections.emptyList();
         try {
             Dao<Channel, Integer> myChennelDao = HelperFactory.getHelper().getChannelDao();
             myChannels = myChennelDao.queryForAll();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         //создаем по кнопке на канал
         for (final Channel channel : myChannels) {
             Button myButton = new Button(this);
@@ -175,7 +158,6 @@ public class StartScreenActivity extends SherlockActivity {
                     startActivity(intent);
                 }
             };
-
             myButton.setOnClickListener(onClickListener);
             buttonlayout.addView(myButton);
         }
@@ -197,5 +179,43 @@ public class StartScreenActivity extends SherlockActivity {
     }
 
 
+    @Override
+    public Loader<Map<String, String>> onCreateLoader(int i, Bundle bundle) {
+        Log.e(LOG_TAG, " onCreateLoader");
 
+        if (i == LOADER_ID) {
+            loader = new RSSLoader(this, bundle);
+        }
+        return loader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Map<String, String>> loader, Map<String, String> data) {
+        Log.e(LOG_TAG, loader.hashCode() + " onLoadFinished for loader ");
+        if (data!=null) {
+            if (!data.get(STATUS_MSG).equals(STATUS_SUCCESS)) {
+                Toast.makeText(getBaseContext(), String.valueOf(data.get(STATUS_MSG)), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getBaseContext(), (String.valueOf(data.get(STATUS_MSG)))
+                        .concat(String.valueOf(", updated - "))
+                        .concat(String.valueOf(data.get(UPDATED)))
+                        //.concat(", created - ")
+                        //.concat(String.valueOf(data.get(CREATED)))
+                        , Toast.LENGTH_SHORT).show();
+            }
+            //Log.e(LOG_TAG, String.valueOf(data.get(STATUS_CODE)));
+            //Log.e(LOG_TAG, String.valueOf(data.get(STATUS_MSG)));
+            //Log.e(LOG_TAG, String.valueOf(data.get(UPDATED)));
+            //Log.e(LOG_TAG, String.valueOf(data.get(CREATED)));
+        } else {
+            Log.e(LOG_TAG, "data null");
+        }
+
+    }
+
+
+    @Override
+    public void onLoaderReset(Loader<Map<String, String>> objectLoader) {
+        Log.e(LOG_TAG, loader.hashCode() + " onLoaderReset for loader");
+    }
 }

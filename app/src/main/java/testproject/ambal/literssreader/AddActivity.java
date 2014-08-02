@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,11 +17,17 @@ import java.util.Map;
 
 import testproject.ambal.literssreader.service.DataUpdater;
 
+import static testproject.ambal.literssreader.service.Downloader.CREATED;
+import static testproject.ambal.literssreader.service.Downloader.STATUS_MSG;
+import static testproject.ambal.literssreader.service.Downloader.STATUS_SUCCESS;
+import static testproject.ambal.literssreader.service.Downloader.UPDATED;
+
 /**
  * Created by Ambal on 28.07.14.
  */
 public class AddActivity extends SherlockActivity{
 
+    private static final String LOG_TAG = "mylogs";
     private EditText mText;
     private Handler mHandler;
 
@@ -37,18 +44,23 @@ public class AddActivity extends SherlockActivity{
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case 0:
-                        final Map<String, Integer> result = (Map<String, Integer>) msg.obj;
-                        String mapToString = result.toString();
-                        //показываем сколько скачалось и сколько обновилось
-                        Toast.makeText(getBaseContext(),  mapToString
-                                .substring(1, mapToString.length() - 1), Toast.LENGTH_SHORT).show();
-                        // если все 0, проверить инет
-                        StringBuffer sb = new StringBuffer();
-                        for (Integer next : result.values()) {
-                            sb.append(next);
-                        }
-                        if (sb.toString().equals("00")){
-                            Toast.makeText(getBaseContext(), getString(R.string.check_conn), Toast.LENGTH_LONG).show();
+                        final Map<String, String> result = (Map<String, String>) msg.obj;
+                        if (result!=null) {
+                            // если статус не "ОК", проверить инет
+                            if (!result.get(STATUS_MSG).equals(STATUS_SUCCESS)) {
+                                Toast.makeText(getBaseContext(), String.valueOf(result.get(STATUS_MSG))
+                                        , Toast.LENGTH_SHORT).show();
+                            } else {
+                                //показываем сколько скачалось и сколько обновилось
+                                Toast.makeText(getBaseContext(), (String.valueOf(result.get(STATUS_MSG)))
+                                        .concat(String.valueOf(", updated - "))
+                                        .concat(String.valueOf(result.get(UPDATED)))
+                                        .concat(", created - ")
+                                        .concat(String.valueOf(result.get(CREATED)))
+                                        , Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Log.e(LOG_TAG, "empty result");
                         }
                         break;
                 }
