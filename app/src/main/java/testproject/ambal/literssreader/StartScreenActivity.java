@@ -6,11 +6,16 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -27,13 +32,18 @@ import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.UpdateManager;
 
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import testproject.ambal.literssreader.ORM.HelperFactory;
 import testproject.ambal.literssreader.ORM.entities.Channel;
+import testproject.ambal.literssreader.ORM.entities.Item;
 import testproject.ambal.literssreader.service.RSSLoader;
 import static testproject.ambal.literssreader.service.Downloader.*;
 
@@ -42,9 +52,9 @@ public class StartScreenActivity extends SherlockFragmentActivity implements Loa
 
     private List<Channel> myChannels;
     private static final String LOG_TAG = "mylogs";
-    private LinearLayout buttonlayout;
 
-    private ProgressBar progressBar;
+    private ArrayList<Button> mButtons;
+    private ButtonAdapter mAdapter;
 
     Loader<Map<String, String>> loader = null;
 
@@ -55,7 +65,6 @@ public class StartScreenActivity extends SherlockFragmentActivity implements Loa
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_start_screen);
-        buttonlayout = (LinearLayout)findViewById(R.id.button_keeper);
 
         initImageLoader(getApplicationContext());
     }
@@ -130,18 +139,27 @@ public class StartScreenActivity extends SherlockFragmentActivity implements Loa
         checkForCrashes();
         checkForUpdates();
 
+
+        mButtons = (ArrayList<Button>) getButtonListFromDB();
+        mAdapter = new ButtonAdapter(mButtons);
+        ListView view = (ListView) findViewById(R.id.listView);
+        view.setAdapter(mAdapter);
+
+    }
+
+    private List<Button> getButtonListFromDB(){
         //создаем кнопки каналов, кажд. раз при возврате на экран
-        buttonlayout.removeAllViews();
         //читаем список имеющихся каналов
         HelperFactory.setHelper(getApplicationContext());
         myChannels = Collections.emptyList();
         try {
-            Dao<Channel, Integer> myChennelDao = HelperFactory.getHelper().getChannelDao();
-            myChannels = myChennelDao.queryForAll();
+            Dao<Channel, Integer> myChannelDao = HelperFactory.getHelper().getChannelDao();
+            myChannels = myChannelDao.queryForAll();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
+        List<Button> mButtons = new ArrayList<Button>();
         //создаем по кнопке на канал
         for (final Channel channel : myChannels) {
             Button myButton = new Button(this);
@@ -159,10 +177,14 @@ public class StartScreenActivity extends SherlockFragmentActivity implements Loa
                 }
             };
             myButton.setOnClickListener(onClickListener);
-            buttonlayout.addView(myButton);
+            mButtons.add(myButton);
         }
-
+        return mButtons;
     }
+
+
+
+
 
     @Override
     protected void onDestroy() {
@@ -218,4 +240,67 @@ public class StartScreenActivity extends SherlockFragmentActivity implements Loa
     public void onLoaderReset(Loader<Map<String, String>> objectLoader) {
         Log.e(LOG_TAG, loader.hashCode() + " onLoaderReset for loader");
     }
+
+
+
+
+
+
+
+
+
+
+
+    //----------------------------------------------------------------------------------
+    private class ButtonAdapter extends ArrayAdapter<Button> {
+        private ArrayList<Button> buttons;
+
+        public ButtonAdapter(ArrayList<Button> buttons) {
+            super(getBaseContext(), 0 , buttons);
+            this.buttons = buttons;
+        }
+        @Override
+        public int getCount() { return buttons.size(); }
+        @Override
+        public Button getItem(int position) { return buttons.get(position); }
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if(convertView == null) {
+                convertView = buttons.get(position);
+            }
+            return convertView;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
