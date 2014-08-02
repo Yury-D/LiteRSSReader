@@ -33,37 +33,42 @@ public class PrefActivity extends SherlockPreferenceActivity implements SharedPr
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.prefs);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         prefs.registerOnSharedPreferenceChangeListener(this);
 
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //чтобы правильно расставить галочки, прочитаем из бд список каналов
+                HelperFactory.setHelper(getApplicationContext());
+                List<Channel> myChannels = Collections.emptyList();
+                try {
+                    myChannels = HelperFactory.getHelper().getChannelDao().queryForAll();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                currentChannelsUrlsList = new ArrayList<String>();
+                for (Channel mChannel : myChannels) {
+                    currentChannelsUrlsList.add(mChannel.getUrl());
+                }
 
-        //чтобы правильно расставить галочки, прочитаем из бд список каналов
-        HelperFactory.setHelper(getApplicationContext());
-        List<Channel> myChannels = Collections.EMPTY_LIST;
-        try {
-            myChannels = HelperFactory.getHelper().getChannelDao().queryForAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        currentChannelsUrlsList = new ArrayList<String>();
-        for (Channel mChannel : myChannels) {
-            currentChannelsUrlsList.add(mChannel.getUrl());
-        }
 
-
-        SharedPreferences.Editor editor = prefs.edit();
-        Log.e(LOG_TAG, String.valueOf(prefs.getAll().size()));
-        for (String url : currentChannelsUrlsList) {
-            if (prefs.contains(url)) {
-                editor.putBoolean(url, true).commit();
+                SharedPreferences.Editor editor = prefs.edit();
+                Log.e(LOG_TAG, String.valueOf(prefs.getAll().size()));
+                for (String url : currentChannelsUrlsList) {
+                    if (prefs.contains(url)) {
+                        editor.putBoolean(url, true).commit();
+                    }
+                }
+                //editor.commit();
             }
-        }
-        //editor.commit();
+        });
+        t.start();
 
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, final String s) {
         Log.e(LOG_TAG, s);
 
         if (sharedPreferences.getBoolean(s,false)){
@@ -73,24 +78,31 @@ public class PrefActivity extends SherlockPreferenceActivity implements SharedPr
                 Log.e(LOG_TAG, "added");
             }
         } else {
-            //если убрали галочку, то найти канал с таким url и удалить его
-            if (currentChannelsUrlsList.contains(s)){
-                List<Channel> channelsForRemove;
-                try {
-                    channelsForRemove = HelperFactory.getHelper().getChannelDao().queryForEq("url", s);
-                    //удаляем item-ы
-                    for (Channel channel: channelsForRemove){
-                        List<Item> itemsForDelete = HelperFactory.getHelper().getItemDao().queryForEq("channel_id",
-                                channel.getId());
-                        HelperFactory.getHelper().getItemDao().delete(itemsForDelete);
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (currentChannelsUrlsList.contains(s)){
+                        List<Channel> channelsForRemove;
+                        try {
+                            channelsForRemove = HelperFactory.getHelper().getChannelDao().queryForEq("url", s);
+                            //удаляем item-ы
+                            for (Channel channel: channelsForRemove){
+                                List<Item> itemsForDelete = HelperFactory.getHelper().getItemDao().queryForEq("channel_id",
+                                        channel.getId());
+                                HelperFactory.getHelper().getItemDao().delete(itemsForDelete);
+                            }
+                            // и сам канал
+                            HelperFactory.getHelper().getChannelDao().delete(channelsForRemove);
+                            Log.e(LOG_TAG, "deleted");
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
                     }
-                    // и сам канал
-                    HelperFactory.getHelper().getChannelDao().delete(channelsForRemove);
-                    Log.e(LOG_TAG, "deleted");
-                } catch (SQLException e) {
-                    e.printStackTrace();
                 }
-            }
+            });
+            t.start();
+            //если убрали галочку, то найти канал с таким url и удалить его
+
         }
     }
 
