@@ -53,9 +53,6 @@ public class StartScreenActivity extends SherlockFragmentActivity implements Loa
     private List<Channel> myChannels;
     private static final String LOG_TAG = "mylogs";
 
-    private ArrayList<Button> mButtons;
-    private ButtonAdapter mAdapter;
-
     Loader<Map<String, String>> loader = null;
 
 
@@ -140,8 +137,8 @@ public class StartScreenActivity extends SherlockFragmentActivity implements Loa
         checkForUpdates();
 
 
-        mButtons = (ArrayList<Button>) getButtonListFromDB();
-        mAdapter = new ButtonAdapter(mButtons);
+        List<Button> mButtons = getButtonListFromDB();
+        ButtonAdapter mAdapter = new ButtonAdapter((ArrayList<Button>) mButtons);
         ListView view = (ListView) findViewById(R.id.listView);
         view.setAdapter(mAdapter);
 
