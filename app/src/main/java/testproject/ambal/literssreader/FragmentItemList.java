@@ -34,6 +34,7 @@ import java.util.Locale;
 import testproject.ambal.literssreader.ORM.entities.Channel;
 import testproject.ambal.literssreader.ORM.entities.Item;
 import testproject.ambal.literssreader.service.DataUpdater;
+import testproject.ambal.literssreader.service.ParserJackson;
 
 public class FragmentItemList extends SherlockFragment implements AbsListView.OnItemClickListener {
     private static final String LOG_TAG = "mylogs";
@@ -129,6 +130,9 @@ public class FragmentItemList extends SherlockFragment implements AbsListView.On
                 return true;
             case R.id.menuItem_settings: {
                 Toast.makeText(getSherlockActivity(), "Not implemented yet", Toast.LENGTH_SHORT).show();
+               /* ParserJackson v = new ParserJackson();
+                Channel ch = v.parse("http://news.tut.by/rss/it.rss");
+                //Log.e(LOG_TAG, ch.toString());*/
                 return true;
             }
             default:
