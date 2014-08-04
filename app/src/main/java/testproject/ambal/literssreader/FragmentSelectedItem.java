@@ -2,64 +2,64 @@ package testproject.ambal.literssreader;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.MenuItem;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import testproject.ambal.literssreader.ORM.entities.Item;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link SelectedItemFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link SelectedItemFragment#newInstance} factory method to
- * create an instance of this fragment.
- *
- */
-public class SelectedItemFragment extends SherlockFragment {
+public class FragmentSelectedItem extends SherlockFragment {
+    private static final String LOG_TAG = "mylogs";
     private static final String ARG_ID = "id";
-    private static int itemId = 0;
-    private static Item mItem;
+    private Item mItem;
 
     private OnFragmentInteractionListener mListener;
 
-    public static SelectedItemFragment newInstance(Item selectedItem) {
-        SelectedItemFragment fragment = new SelectedItemFragment();
-        mItem = selectedItem;
+    public static FragmentSelectedItem newInstance(Item selectedItem) {
+        FragmentSelectedItem fragment = new FragmentSelectedItem();
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_ID, selectedItem);
+        fragment.setArguments(args);
+
         return fragment;
     }
-    public SelectedItemFragment() {
+    public FragmentSelectedItem() {
         // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         if (getArguments() != null) {
-            itemId = getArguments().getInt(ARG_ID);
+            mItem = (Item) getArguments().getSerializable(ARG_ID);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_item, container, false);
+        View view = inflater.inflate(R.layout.fragment_selected_item, container, false);
         TextView title = (TextView) view.findViewById(R.id.tvTitle);
         TextView content = (TextView) view.findViewById(R.id.tvContent);
         TextView date = (TextView) view.findViewById(R.id.tvPubDate);
+        ImageView img = (ImageView) view.findViewById(R.id.imageView);
         title.setText(mItem.getTitle());
         content.setText(Html.fromHtml(mItem.getDescription()));
         content.setMovementMethod(LinkMovementMethod.getInstance());
         date.setText(mItem.getPubDate());
+        ImageLoader.getInstance().displayImage(mItem.getEnclosure(), img);
 
         return view;
     }
@@ -90,6 +90,7 @@ public class SelectedItemFragment extends SherlockFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
+                Log.e(LOG_TAG, "click");
                 if (NavUtils.getParentActivityName(getActivity()) != null) {
                     NavUtils.navigateUpFromSameTask(getActivity());
                 }

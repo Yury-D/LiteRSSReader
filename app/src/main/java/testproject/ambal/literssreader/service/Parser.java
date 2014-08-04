@@ -110,7 +110,7 @@ public class Parser {
                 switch (eventType) {
                     case XmlPullParser.START_TAG:
                         if (tagname.equalsIgnoreCase(TAG_ITEM)) {
-                            // create a new instance of item
+                            // create a new instance of item_for_list
                             item = new Item();
                             insideItem = true;
                         }
@@ -135,7 +135,7 @@ public class Parser {
                     case XmlPullParser.END_TAG:
                         if (insideItem) {
                             if (tagname.equalsIgnoreCase(TAG_ITEM)) {
-                                // add item object to list
+                                // add item_for_list object to list
                                 item.setChannel(channel);
                                 items.add(item);
                                 insideItem = false;

@@ -23,7 +23,7 @@ import testproject.ambal.literssreader.ORM.entities.Item;
 import testproject.ambal.literssreader.service.DataUpdater;
 
 
-public class PrefActivity extends SherlockPreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class ActivityPreferences extends SherlockPreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String LOG_TAG = "mylogs";
     ArrayList<String> currentChannelsUrlsList;
 
@@ -85,7 +85,7 @@ public class PrefActivity extends SherlockPreferenceActivity implements SharedPr
                         List<Channel> channelsForRemove;
                         try {
                             channelsForRemove = HelperFactory.getHelper().getChannelDao().queryForEq("url", s);
-                            //удаляем item-ы
+                            //удаляем item_for_list-ы
                             for (Channel channel: channelsForRemove){
                                 List<Item> itemsForDelete = HelperFactory.getHelper().getItemDao().queryForEq("channel_id",
                                         channel.getId());

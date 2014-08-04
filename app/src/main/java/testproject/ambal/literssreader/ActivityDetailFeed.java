@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import testproject.ambal.literssreader.ORM.HelperFactory;
 import testproject.ambal.literssreader.ORM.entities.Channel;
 
-public class DetailFeedActivity extends SherlockFragmentActivity implements ItemFragment.OnFragmentInteractionListener, SelectedItemFragment.OnFragmentInteractionListener {
+public class ActivityDetailFeed extends SherlockFragmentActivity implements FragmentItemList.OnFragmentInteractionListener, FragmentSelectedItem.OnFragmentInteractionListener {
     private static final String LOG_TAG = "mylogs";
 
     @Override
@@ -27,7 +27,7 @@ public class DetailFeedActivity extends SherlockFragmentActivity implements Item
         try {
             mChannel = HelperFactory.getHelper().getChannelDao().queryForId(channelId);
             ActionBar actionBar = getSupportActionBar();
-            actionBar.setTitle(mChannel.getTitle());
+            //actionBar.setTitle(mChannel.getTitle());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -35,7 +35,7 @@ public class DetailFeedActivity extends SherlockFragmentActivity implements Item
         FragmentTransaction mFragmentTransaction = manager.beginTransaction();
         SherlockFragment myFragment = (SherlockFragment) manager.findFragmentById(R.id.frgm);
         if (null == myFragment) {
-            myFragment = ItemFragment.newInstance(mChannel);
+            myFragment = FragmentItemList.newInstance(mChannel);
             mFragmentTransaction.add(R.id.frgm, myFragment);
             mFragmentTransaction.commit();
         }

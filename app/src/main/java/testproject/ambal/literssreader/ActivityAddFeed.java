@@ -25,7 +25,7 @@ import static testproject.ambal.literssreader.service.Downloader.UPDATED;
 /**
  * Created by Ambal on 28.07.14.
  */
-public class AddActivity extends SherlockActivity{
+public class ActivityAddFeed extends SherlockActivity{
 
     private static final String LOG_TAG = "mylogs";
     private EditText mText;

@@ -1,11 +1,11 @@
 package testproject.ambal.literssreader;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
@@ -36,9 +35,9 @@ import testproject.ambal.literssreader.ORM.entities.Channel;
 import testproject.ambal.literssreader.ORM.entities.Item;
 import testproject.ambal.literssreader.service.DataUpdater;
 
-public class ItemFragment extends SherlockFragment implements AbsListView.OnItemClickListener {
-    private static final String FRAG2 = "frag2";
-    static DisplayImageOptions options;
+public class FragmentItemList extends SherlockFragment implements AbsListView.OnItemClickListener {
+    private static final String LOG_TAG = "mylogs";
+    private static DisplayImageOptions options;
     private static List<String> iconUrls;
 
     private OnFragmentInteractionListener mListener;
@@ -48,14 +47,9 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
     private static List<Item> sItems;
 
 
-    private SherlockFragment myFragment;
-    private FragmentTransaction mFragmentTransaction;
-    private FragmentManager manager;
 
-
-
-    public static ItemFragment newInstance(Channel channel) {
-        ItemFragment fragment = new ItemFragment();
+    public static FragmentItemList newInstance(Channel channel) {
+        FragmentItemList fragment = new FragmentItemList();
         currentChannel = channel;
         sItems = new ArrayList<Item>(channel.getItems());
         iconUrls = new ArrayList<String>(channel.getItems().size());
@@ -76,7 +70,7 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ItemFragment() {
+    public FragmentItemList() {
     }
 
     @Override
@@ -105,7 +99,7 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
         mListView = (AbsListView) view.findViewById(android.R.id.list);
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
 
-        // Set OnItemClickListener so we can be notified on item clicks
+        // Set OnItemClickListener so we can be notified on item_for_list clicks
         mListView.setOnItemClickListener(this);
         if (NavUtils.getParentActivityName(getActivity()) != null) {
             getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -152,17 +146,17 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (null != mListener) {
+        if (mListener != null) {
             // Notify the active callbacks interface (the activity, if the
-            // fragment is attached to one) that an item has been selected.
+            // fragment is attached to one) that an item_for_list has been selected.
             //mListener.onFragmentInteraction(position);
-            manager = getActivity().getSupportFragmentManager();
-            mFragmentTransaction = manager.beginTransaction();
-            Item selectedItem = new ArrayList<Item>(currentChannel.getItems()).get(position);
-            myFragment = SelectedItemFragment.newInstance(selectedItem);
-            mFragmentTransaction.replace(R.id.frgm, myFragment);
-            mFragmentTransaction.addToBackStack(FRAG2);
-            mFragmentTransaction.commit();
+
+            Intent i = new Intent(getActivity(), ActivityItemPager.class);
+            i.putExtra("channelId", currentChannel.getId());
+            i.putExtra("itemId", position);
+            Log.e(LOG_TAG, String.valueOf(position +  " position in ItemFragment"));
+            startActivity(i);
+
         }
     }
 
@@ -226,7 +220,7 @@ public class ItemFragment extends SherlockFragment implements AbsListView.OnItem
             ViewHolder holder;
             if(convertView == null) {
                 holder = new ViewHolder();
-                convertView = inflater.inflate(R.layout.item, null);
+                convertView = inflater.inflate(R.layout.item_for_list, null);
                 holder.tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
                 holder.tvPubDate = (TextView) convertView.findViewById(R.id.tvPubDate);
                 holder.imageView = (ImageView) convertView.findViewById(R.id.imageView);

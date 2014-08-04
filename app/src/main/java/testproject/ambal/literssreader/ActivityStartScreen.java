@@ -6,16 +6,11 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -32,22 +27,17 @@ import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.UpdateManager;
 
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import testproject.ambal.literssreader.ORM.HelperFactory;
 import testproject.ambal.literssreader.ORM.entities.Channel;
-import testproject.ambal.literssreader.ORM.entities.Item;
 import testproject.ambal.literssreader.service.RSSLoader;
 import static testproject.ambal.literssreader.service.Downloader.*;
 
-public class StartScreenActivity extends SherlockFragmentActivity implements LoaderManager.LoaderCallbacks<Map<String, String>> {
+public class ActivityStartScreen extends SherlockFragmentActivity implements LoaderManager.LoaderCallbacks<Map<String, String>> {
     private static final int LOADER_ID = 1;
 
     private List<Channel> myChannels;
@@ -94,7 +84,7 @@ public class StartScreenActivity extends SherlockFragmentActivity implements Loa
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
+        // Handle action bar item_for_list clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         ArrayList<String> currentChannelsUrlsList = new ArrayList<String>();
@@ -114,12 +104,12 @@ public class StartScreenActivity extends SherlockFragmentActivity implements Loa
                 break;
             }
             case R.id.menuItem_settings: {
-                Intent mIntent = new Intent(this, PrefActivity.class);
+                Intent mIntent = new Intent(this, ActivityPreferences.class);
                 startActivity(mIntent);
                 break;
             }
             case R.id.menuItem_addFeed: {
-                Intent mIntent = new Intent(this, AddActivity.class);
+                Intent mIntent = new Intent(this, ActivityAddFeed.class);
                 startActivity(mIntent);
                 break;
             }
@@ -167,7 +157,7 @@ public class StartScreenActivity extends SherlockFragmentActivity implements Loa
             View.OnClickListener onClickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(getApplicationContext(), DetailFeedActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), ActivityDetailFeed.class);
                     //передаем id фида в intent
                     intent.putExtra("ChannelId", channel.getId());
                     startActivity(intent);

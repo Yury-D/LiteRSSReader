@@ -12,28 +12,38 @@
         android:theme="@style/Theme.Sherlock">
         <activity android:name="net.hockeyapp.android.UpdateActivity" />
         <activity
-            android:name=".StartScreenActivity"
-            android:label="@string/app_name">
+            android:name=".ActivityStartScreen"
+            android:label="@string/app_name"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".DetailFeedActivity">
+            android:name=".ActivityDetailFeed"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".StartScreenActivity"/>
+                android:value=".ActivityStartScreen"/>
         </activity>
         <activity
-            android:name=".PrefActivity">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
+            android:name=".ActivityPreferences">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ActivityStartScreen" />
+        </activity>
+        <activity
+            android:name=".ActivityAddFeed">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
                 android:value=".StartScreenActivity" />
         </activity>
         <activity
-            android:name=".AddActivity">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value=".StartScreenActivity" />
+            android:name=".ActivityItemPager">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ActivityDetailFeed" />
         </activity>
     </application>
 

@@ -7,8 +7,10 @@ package testproject.ambal.literssreader.ORM.entities;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.io.Serializable;
+
 @DatabaseTable(tableName = "Item")
-public class Item {
+public class Item implements Serializable {
 
     @DatabaseField(generatedId = true)
     int id;

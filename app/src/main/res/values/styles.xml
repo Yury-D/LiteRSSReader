@@ -14,7 +14,7 @@
         <item name="android:shadowDy">1</item>
         <item name="android:shadowRadius">0.6</item>
         <item name="android:background">@drawable/custom_btn_medium_wood</item>
-        <!--<item name="android:padding">10dip</item>-->
+        <!--<item_for_list name="android:padding">10dip</item_for_list>-->
         <item name="android:layout_margin">0.1dp</item>
     </style>
     <style name="btnStylesorbus" parent="@android:style/Widget.Button">
@@ -38,7 +38,7 @@
         <item name="android:shadowDy">1</item>
         <item name="android:shadowRadius">0.6</item>
         <item name="android:background">@drawable/custom_btn_blue</item>
-        <!--<item name="android:padding">10dip</item>-->
+        <!--<item_for_list name="android:padding">10dip</item_for_list>-->
         <item name="android:layout_margin">0.1dp</item>
     </style>
 </resources>
